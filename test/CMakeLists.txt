@@ -23,6 +23,7 @@ set(SRC
     copy.cpp
     cpio.cpp
     cse.cpp
+    custom.cpp
     element_type.cpp
     file_util.cpp
     all_close_f.cpp
