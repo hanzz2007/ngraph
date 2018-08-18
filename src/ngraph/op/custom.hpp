@@ -20,6 +20,7 @@
 #include <string>
 
 #include "ngraph/op/util/requires_tensor_view_args.hpp"
+#include "ngraph/runtime/tensor_view.hpp"
 
 namespace ngraph
 {
@@ -37,8 +38,8 @@ namespace ngraph
             /// \param args Nodes that produces the input tensor.
             Custom(const std::string& name, const NodeVector& args);
 
-            // virtual std::shared_ptr<Node>
-            //     copy_with_new_args(const NodeVector& new_args) const override;
+            virtual void execute(const std::vector<std::shared_ptr<runtime::TensorView>>& out,
+                                 const std::vector<std::shared_ptr<runtime::TensorView>>& args) const= 0;
 
         protected:
             virtual void generate_adjoints(autodiff::Adjoints& adjoints,

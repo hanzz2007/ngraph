@@ -53,6 +53,25 @@ TEST(custom_op, abc)
             set_value_type_checked(
                 make_shared<TensorViewType>(arg0->get_element_type(), arg0->get_shape()));
         }
+
+        void execute(const std::vector<std::shared_ptr<runtime::TensorView>>& out,
+                     const std::vector<std::shared_ptr<runtime::TensorView>>& args) const override
+        {
+            size_t size = out[0]->get_element_count();
+            vector<float> arg0(size);
+            vector<float> arg1(size);
+            vector<float> arg2(size);
+            vector<float> out0(size);
+            args[0]->read(arg0.data(), 0, size * 4);
+            args[1]->read(arg1.data(), 0, size * 4);
+            args[2]->read(arg2.data(), 0, size * 4);
+            for (size_t i = 0; i < size; i++)
+            {
+                out0[i] = (arg0[i] + arg1[i]) * arg2[i];
+            }
+            out[0]->write(out0.data(), 0, size * 4);
+        }
+
         // static const uuid_type& get_custom_id()
         // {
         //     static uuid_type my_uuid;
@@ -73,34 +92,33 @@ TEST(custom_op, abc)
     // ngraph::op::RegisterCustom<abc_op>("ABC");
 
     Shape shape{2, 2};
-    NGRAPH_INFO;
     auto A = make_shared<op::Parameter>(element::f32, shape);
     auto B = make_shared<op::Parameter>(element::f32, shape);
     auto C = make_shared<op::Parameter>(element::f32, shape);
-    NGRAPH_INFO;
     auto abc = make_shared<abc_op>(A, B, C);
-    NGRAPH_INFO;
     auto f = make_shared<Function>(abc, op::ParameterVector{A, B, C});
-    NGRAPH_INFO;
 
     auto backend = runtime::Backend::create("INTERPRETER");
-    NGRAPH_INFO;
 
     // Create some tensors for input/output
     shared_ptr<runtime::TensorView> a = backend->create_tensor(element::f32, shape);
     shared_ptr<runtime::TensorView> b = backend->create_tensor(element::f32, shape);
     shared_ptr<runtime::TensorView> c = backend->create_tensor(element::f32, shape);
-    NGRAPH_INFO;
     shared_ptr<runtime::TensorView> result = backend->create_tensor(element::f32, shape);
-    NGRAPH_INFO;
 
     copy_data(a, test::NDArray<float, 2>({{1, 2}, {3, 4}}).get_vector());
     copy_data(b, test::NDArray<float, 2>({{5, 6}, {7, 8}}).get_vector());
     copy_data(c, test::NDArray<float, 2>({{9, 10}, {11, 12}}).get_vector());
 
-    NGRAPH_INFO;
     backend->call_with_validate(f, {result}, {a, b, c});
-    NGRAPH_INFO;
     EXPECT_EQ(read_vector<float>(result),
               (test::NDArray<float, 2>({{54, 80}, {110, 144}})).get_vector());
+
+    backend->call_with_validate(f, {result}, {b, a, c});
+    EXPECT_EQ(read_vector<float>(result),
+              (test::NDArray<float, 2>({{54, 80}, {110, 144}})).get_vector());
+
+    backend->call_with_validate(f, {result}, {a, c, b});
+    EXPECT_EQ(read_vector<float>(result),
+              (test::NDArray<float, 2>({{50, 72}, {98, 128}})).get_vector());
 }
