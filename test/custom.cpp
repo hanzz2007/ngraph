@@ -23,6 +23,7 @@
 #include "ngraph/log.hpp"
 #include "ngraph/op/custom.hpp"
 #include "ngraph/runtime/backend.hpp"
+#include "ngraph/runtime/interpreter/int_backend.hpp"
 #include "util/ndarray.hpp"
 #include "util/test_tools.hpp"
 
@@ -54,29 +55,27 @@ TEST(custom_op, abc)
                 make_shared<TensorViewType>(arg0->get_element_type(), arg0->get_shape()));
         }
 
-        void execute(const std::vector<std::shared_ptr<runtime::TensorView>>& out,
+        void execute(runtime::Backend* backend,
+                     const std::vector<std::shared_ptr<runtime::TensorView>>& out,
                      const std::vector<std::shared_ptr<runtime::TensorView>>& args) const override
         {
-            size_t size = out[0]->get_element_count();
-            vector<float> arg0(size);
-            vector<float> arg1(size);
-            vector<float> arg2(size);
-            vector<float> out0(size);
-            args[0]->read(arg0.data(), 0, size * 4);
-            args[1]->read(arg1.data(), 0, size * 4);
-            args[2]->read(arg2.data(), 0, size * 4);
-            for (size_t i = 0; i < size; i++)
+            if (dynamic_cast<runtime::interpreter::INTBackend*>(backend))
             {
-                out0[i] = (arg0[i] + arg1[i]) * arg2[i];
+                size_t size = out[0]->get_element_count();
+                vector<float> arg0(size);
+                vector<float> arg1(size);
+                vector<float> arg2(size);
+                vector<float> out0(size);
+                args[0]->read(arg0.data(), 0, size * 4);
+                args[1]->read(arg1.data(), 0, size * 4);
+                args[2]->read(arg2.data(), 0, size * 4);
+                for (size_t i = 0; i < size; i++)
+                {
+                    out0[i] = (arg0[i] + arg1[i]) * arg2[i];
+                }
+                out[0]->write(out0.data(), 0, size * 4);
             }
-            out[0]->write(out0.data(), 0, size * 4);
         }
-
-        // static const uuid_type& get_custom_id()
-        // {
-        //     static uuid_type my_uuid;
-        //     return my_uuid;
-        // }
 
     private:
         shared_ptr<Node> copy_with_new_args(const NodeVector& new_args) const override
@@ -88,8 +87,6 @@ TEST(custom_op, abc)
             return make_shared<abc_op>(new_args.at(0), new_args.at(1), new_args.at(2));
         }
     };
-
-    // ngraph::op::RegisterCustom<abc_op>("ABC");
 
     Shape shape{2, 2};
     auto A = make_shared<op::Parameter>(element::f32, shape);

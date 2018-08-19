@@ -1048,7 +1048,7 @@ private:
                 {
                     inputs.push_back(std::static_pointer_cast<runtime::TensorView>(tv));
                 }
-                custom->execute(outputs, inputs);
+                custom->execute(this, outputs, inputs);
             }
         }
     }

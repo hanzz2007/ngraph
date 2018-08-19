@@ -30,13 +30,19 @@ namespace ngraph
         class Custom : public util::RequiresTensorViewArgs
         {
         public:
+            using executor_t =
+                std::function<void(const std::vector<std::shared_ptr<runtime::TensorView>>& out,
+                                   const std::vector<std::shared_ptr<runtime::TensorView>>& args)>;
             /// \brief Constructs a Custom op.
             ///
             /// \param args Nodes that produces the input tensor.
             Custom(const std::string& name, const NodeVector& args);
 
+            // virtual executor_t get_executor(const std::string& backend_name) = 0;
+
             virtual void
-                execute(const std::vector<std::shared_ptr<runtime::TensorView>>& out,
+                execute(runtime::Backend* backend,
+                        const std::vector<std::shared_ptr<runtime::TensorView>>& out,
                         const std::vector<std::shared_ptr<runtime::TensorView>>& args) const = 0;
 
         protected:
