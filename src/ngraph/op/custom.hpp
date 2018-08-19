@@ -26,9 +26,6 @@ namespace ngraph
 {
     namespace op
     {
-        // template <typename T>
-        // void RegisterCustom(const std::string& name);
-
         /// \brief Custom op
         class Custom : public util::RequiresTensorViewArgs
         {
@@ -38,8 +35,9 @@ namespace ngraph
             /// \param args Nodes that produces the input tensor.
             Custom(const std::string& name, const NodeVector& args);
 
-            virtual void execute(const std::vector<std::shared_ptr<runtime::TensorView>>& out,
-                                 const std::vector<std::shared_ptr<runtime::TensorView>>& args) const= 0;
+            virtual void
+                execute(const std::vector<std::shared_ptr<runtime::TensorView>>& out,
+                        const std::vector<std::shared_ptr<runtime::TensorView>>& args) const = 0;
 
         protected:
             virtual void generate_adjoints(autodiff::Adjoints& adjoints,

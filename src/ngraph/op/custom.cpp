@@ -24,15 +24,6 @@ op::Custom::Custom(const string& name, const NodeVector& args)
 {
 }
 
-// shared_ptr<Node> op::Custom::copy_with_new_args(const NodeVector& new_args) const
-// {
-//     // if (new_args.size() != 1)
-//     // {
-//     //     throw ngraph_error("Incorrect number of new arguments");
-//     // }
-//     // return make_shared<Custom>(new_args.at(0));
-// }
-
 void op::Custom::generate_adjoints(autodiff::Adjoints& adjoints, const NodeVector& deltas)
 {
 }
