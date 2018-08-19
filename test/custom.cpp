@@ -61,19 +61,19 @@ TEST(custom_op, abc)
         {
             if (dynamic_cast<runtime::interpreter::INTBackend*>(backend))
             {
+                const float* arg0 =
+                    dynamic_pointer_cast<runtime::HostTensorView>(args[0])->get_data_ptr<float>();
+                const float* arg1 =
+                    dynamic_pointer_cast<runtime::HostTensorView>(args[1])->get_data_ptr<float>();
+                const float* arg2 =
+                    dynamic_pointer_cast<runtime::HostTensorView>(args[2])->get_data_ptr<float>();
+                float* out0 =
+                    dynamic_pointer_cast<runtime::HostTensorView>(out[0])->get_data_ptr<float>();
                 size_t size = out[0]->get_element_count();
-                vector<float> arg0(size);
-                vector<float> arg1(size);
-                vector<float> arg2(size);
-                vector<float> out0(size);
-                args[0]->read(arg0.data(), 0, size * 4);
-                args[1]->read(arg1.data(), 0, size * 4);
-                args[2]->read(arg2.data(), 0, size * 4);
                 for (size_t i = 0; i < size; i++)
                 {
                     out0[i] = (arg0[i] + arg1[i]) * arg2[i];
                 }
-                out[0]->write(out0.data(), 0, size * 4);
             }
         }
 
