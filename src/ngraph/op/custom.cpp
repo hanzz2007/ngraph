@@ -20,8 +20,25 @@ using namespace std;
 using namespace ngraph;
 
 op::Custom::Custom(const string& name, const NodeVector& args)
-    : RequiresTensorViewArgs(name, args)
+    : Op(name, args)
 {
+}
+
+void op::Custom::register_exec(const std::string& backend, execute_t f)
+{
+    m_execute_collection.insert({backend, f});
+}
+
+op::Custom::execute_t op::Custom::get_exec(const std::string& backend_name) const
+{
+    auto it = m_execute_collection.find(backend_name);
+    if (it == m_execute_collection.end())
+    {
+        throw runtime_error("Custom op '" + get_friendly_name() +
+                            "' does not have an execute function for backend '" + backend_name +
+                            "'");
+    }
+    return it->second;
 }
 
 void op::Custom::generate_adjoints(autodiff::Adjoints& adjoints, const NodeVector& deltas)

@@ -16,6 +16,7 @@
 
 #pragma once
 
+#include <initializer_list>
 #include <memory>
 #include <string>
 
@@ -27,24 +28,30 @@ namespace ngraph
     namespace op
     {
         /// \brief Custom op
-        class Custom : public util::RequiresTensorViewArgs
+        class Custom : public ngraph::op::Op
         {
         public:
+            using execute_t =
+                std::function<void(runtime::Backend* backend,
+                                   const std::vector<std::shared_ptr<runtime::TensorView>>& out,
+                                   const std::vector<std::shared_ptr<runtime::TensorView>>& args)>;
+
             /// \brief Constructs a Custom op.
             ///
-            /// \param args Nodes that produces the input tensor.
+            /// \param name Custom op's friendly name.
+            /// \param args Parameters describing the input tensors.
             Custom(const std::string& name, const NodeVector& args);
 
-            // virtual executor_t get_executor(const std::string& backend_name) = 0;
+            void register_exec(const std::string& backend, execute_t);
 
-            virtual void
-                execute(runtime::Backend* backend,
-                        const std::vector<std::shared_ptr<runtime::TensorView>>& out,
-                        const std::vector<std::shared_ptr<runtime::TensorView>>& args) const = 0;
+            execute_t get_exec(const std::string& backend_name) const;
 
         protected:
             virtual void generate_adjoints(autodiff::Adjoints& adjoints,
                                            const NodeVector& deltas) override;
+
+        private:
+            std::unordered_map<std::string, execute_t> m_execute_collection;
         };
     }
 }

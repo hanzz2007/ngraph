@@ -38,6 +38,10 @@ public:
            const std::shared_ptr<Node>& arg2)
         : Custom("ABC", {arg0, arg1, arg2})
     {
+        register_exec(
+            "INTERPRETER",
+            bind(&abc_op::execute, this, placeholders::_1, placeholders::_2, placeholders::_3));
+
         if (arg0->get_element_type() != arg1->get_element_type() ||
             arg0->get_element_type() != arg2->get_element_type())
         {
@@ -53,9 +57,10 @@ public:
             make_shared<TensorViewType>(arg0->get_element_type(), arg0->get_shape()));
     }
 
+private:
     void execute(runtime::Backend* backend,
                  const std::vector<std::shared_ptr<runtime::TensorView>>& out,
-                 const std::vector<std::shared_ptr<runtime::TensorView>>& args) const override
+                 const std::vector<std::shared_ptr<runtime::TensorView>>& args) const
     {
         if (dynamic_cast<runtime::interpreter::INTBackend*>(backend))
         {
@@ -75,7 +80,6 @@ public:
         }
     }
 
-private:
     shared_ptr<Node> copy_with_new_args(const NodeVector& new_args) const override
     {
         if (new_args.size() != 3)
@@ -92,12 +96,7 @@ public:
     unsupported_op()
         : Custom("Unsupported", {})
     {
-    }
-
-    void execute(runtime::Backend* backend,
-                 const std::vector<std::shared_ptr<runtime::TensorView>>& out,
-                 const std::vector<std::shared_ptr<runtime::TensorView>>& args) const override
-    {
+        set_value_type_checked(make_shared<TensorViewType>(element::f32, {1}));
     }
 
 private:
