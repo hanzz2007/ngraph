@@ -54,7 +54,7 @@ public:
         }
 
         set_value_type_checked(
-            make_shared<TensorViewType>(arg0->get_element_type(), arg0->get_shape()));
+            arg0->get_element_type(), arg0->get_shape());
     }
 
 private:
@@ -96,7 +96,7 @@ public:
     unsupported_op()
         : Custom("Unsupported", {})
     {
-        set_value_type_checked(make_shared<TensorViewType>(element::f32, {1}));
+        set_value_type_checked(element::f32, {1});
     }
 
 private:
@@ -142,18 +142,12 @@ TEST(custom_op, abc)
 
 TEST(custom_op, unsupported)
 {
-    NGRAPH_INFO;
     auto unsupported = make_shared<unsupported_op>();
     auto x = op::ParameterVector{};
-    NGRAPH_INFO << x.size();
     auto f = make_shared<Function>(unsupported, x);
-    NGRAPH_INFO;
 
     auto backend = runtime::Backend::create("INTERPRETER");
-    NGRAPH_INFO;
     shared_ptr<runtime::TensorView> result = backend->create_tensor(element::f32, {});
-    NGRAPH_INFO;
 
-    backend->call_with_validate(f, {result}, {});
-    NGRAPH_INFO;
+    EXPECT_ANY_THROW(backend->call_with_validate(f, {result}, {}));
 }
