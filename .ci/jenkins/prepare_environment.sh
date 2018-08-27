@@ -16,31 +16,25 @@
 # otherwise. Any license under such intellectual property rights must be express
 # and approved by Intel in writing.
 
-set -x
 
-# Install nGraph in /root
+# Build nGraph
 cd /root
 mkdir -p ./build
 cd ./build
 cmake ../ -DNGRAPH_USE_PREBUILT_LLVM=TRUE -DCMAKE_INSTALL_PREFIX=/root/ngraph_dist
 make -j $(lscpu --parse=CORE | grep -v '#' | sort | uniq | wc -l)
 make install
-
-# Build nGraph wheel
 cd /root/python
 git clone --recursive -b allow-nonconstructible-holders https://github.com/jagerman/pybind11.git
-
 export PYBIND_HEADERS_PATH="/root/python/pybind11"
 export NGRAPH_CPP_BUILD_PATH="/root/ngraph_dist"
 python3 setup.py bdist_wheel
 
-# Go to mounted directory and pull NGraph-Onnx if needed
+# Clone nGraph-ONNX to /home/ngraph-onnx
 cd /home
 if [ -e ./ngraph-onnx ]; then
     cd ./ngraph-onnx
-    git checkout master
     git pull origin master
 else
-    # clone master branch
-    git clone --single-branch https://github.com/NervanaSystems/ngraph-onnx.git -b master
+    git clone https://github.com/NervanaSystems/ngraph-onnx.git
 fi
