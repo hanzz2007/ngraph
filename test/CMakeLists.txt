@@ -55,10 +55,6 @@ if (NGRAPH_INTERPRETER_ENABLE)
     set(SRC ${SRC} backend_debug_api.cpp builder.cpp backend_api.cpp)
 endif()
 
-if (NGRAPH_CPU_ENABLE)
-    set(SRC ${SRC} core_fusion.cpp)
-endif()
-
 add_subdirectory(models)
 add_subdirectory(files)
 add_subdirectory(util)
@@ -133,6 +129,11 @@ endif()
 if (NGRAPH_CPU_ENABLE)
     # The INTERPRETER backend is required for graph_partition, convolution, and backwards unit tests
     target_link_libraries(unit-test cpu_backend interpreter_backend)
+    target_link_libraries(unit-test libmkldnn)
+endif()
+
+if (NGRAPH_CCPU_ENABLE)
+    target_link_libraries(unit-test ccpu_backend)
     target_link_libraries(unit-test libmkldnn)
 endif()
 
