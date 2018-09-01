@@ -20,8 +20,8 @@
 #include <memory>
 #include <string>
 
-#include "ngraph/op/util/requires_tensor_view_args.hpp"
 #include "ngraph/runtime/tensor_view.hpp"
+#include "ngraph/op/op.hpp"
 
 namespace ngraph
 {
