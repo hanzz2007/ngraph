@@ -30,17 +30,17 @@
 using namespace std;
 using namespace ngraph;
 
-class abc_op : public op::Custom
+class AbcOp : public op::Custom
 {
 public:
-    abc_op(const std::shared_ptr<Node>& arg0,
+    AbcOp(const std::shared_ptr<Node>& arg0,
            const std::shared_ptr<Node>& arg1,
            const std::shared_ptr<Node>& arg2)
         : Custom("ABC", {arg0, arg1, arg2})
     {
         register_exec(
             "INTERPRETER",
-            bind(&abc_op::execute, this, placeholders::_1, placeholders::_2, placeholders::_3));
+            bind(&AbcOp::execute, this, placeholders::_1, placeholders::_2, placeholders::_3));
 
         if (arg0->get_element_type() != arg1->get_element_type() ||
             arg0->get_element_type() != arg2->get_element_type())
@@ -53,8 +53,9 @@ public:
             throw ngraph_error("Arguments must have the same tensor view shape");
         }
 
-        set_value_type_checked(
-            arg0->get_element_type(), arg0->get_shape());
+        const element::Type& element_type = get_input_element_type(0);
+        const Shape& shape = get_input_shape(0);
+        set_output_type(0, element_type, shape);
     }
 
 private:
@@ -84,9 +85,9 @@ private:
     {
         if (new_args.size() != 3)
         {
-            throw ngraph_error("Incorrect number of new arguments for abc_op");
+            throw ngraph_error("Incorrect number of new arguments for AbcOp");
         }
-        return make_shared<abc_op>(new_args.at(0), new_args.at(1), new_args.at(2));
+        return make_shared<AbcOp>(new_args.at(0), new_args.at(1), new_args.at(2));
     }
 };
 
@@ -96,7 +97,7 @@ public:
     unsupported_op()
         : Custom("Unsupported", {})
     {
-        set_value_type_checked(element::f32, {1});
+        constructor_validate_and_infer_types();
     }
 
 private:
@@ -112,7 +113,7 @@ TEST(custom_op, abc)
     auto A = make_shared<op::Parameter>(element::f32, shape);
     auto B = make_shared<op::Parameter>(element::f32, shape);
     auto C = make_shared<op::Parameter>(element::f32, shape);
-    auto abc = make_shared<abc_op>(A, B, C);
+    auto abc = make_shared<AbcOp>(A, B, C);
     auto f = make_shared<Function>(abc, op::ParameterVector{A, B, C});
 
     auto backend = runtime::Backend::create("INTERPRETER");
