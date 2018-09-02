@@ -29,6 +29,7 @@ namespace ngraph
     namespace runtime
     {
         class AlignedBuffer;
+        class Backend;
     }
 }
 
@@ -45,6 +46,7 @@ namespace ngraph
                 mkldnn::primitive* const* mkldnn_primitives;
                 std::vector<AlignedBuffer*> memory_buffers;
                 char* const* mkldnn_workspaces;
+                ngraph::runtime::Backend* backend = nullptr;
             };
             }
         }

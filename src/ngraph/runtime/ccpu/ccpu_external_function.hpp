@@ -89,7 +89,8 @@ public:
         INTERMEDIATE
     };
 
-    CCPUExternalFunction(const std::shared_ptr<ngraph::Function>& function,
+    CCPUExternalFunction(runtime::Backend* backend,
+                         const std::shared_ptr<ngraph::Function>& function,
                          bool release_function = true);
     ~CCPUExternalFunction();
     std::shared_ptr<ngraph::runtime::ccpu::CCPUCallFrame> make_call_frame();
@@ -116,7 +117,7 @@ public:
     {
         return callees;
     }
-
+    runtime::Backend* get_backend() const { return m_backend; }
 protected:
     void compile();
 
@@ -197,4 +198,5 @@ private:
     std::list<std::pair<std::reference_wrapper<void*>, size_t>> function_output_index;
     std::unordered_map<std::string, std::shared_ptr<CCPUExternalFunction>> callees;
     bool m_is_built;
+    runtime::Backend* m_backend;
 };

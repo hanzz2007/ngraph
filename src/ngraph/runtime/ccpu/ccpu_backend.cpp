@@ -73,7 +73,7 @@ bool runtime::ccpu::CCPUBackend::compile(shared_ptr<Function> func)
     FunctionInstance& instance = m_function_map[func];
     if (instance.m_external_function == nullptr)
     {
-        instance.m_external_function = make_shared<CCPUExternalFunction>(func);
+        instance.m_external_function = make_shared<CCPUExternalFunction>(this, func);
         instance.m_external_function->m_emit_timing = instance.m_performance_counters_enabled;
         auto cf = instance.m_external_function->make_call_frame();
         instance.m_call_frame = dynamic_pointer_cast<CCPUCallFrame>(cf);

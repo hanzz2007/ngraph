@@ -154,7 +154,7 @@ using namespace std;
 using namespace ngraph;
 
 runtime::ccpu::CCPUExternalFunction::CCPUExternalFunction(
-    const shared_ptr<ngraph::Function>& function, bool release_function)
+    runtime::Backend* backend, const shared_ptr<ngraph::Function>& function, bool release_function)
     : m_function(function)
     , m_release_function(release_function)
     , m_compiled_function(nullptr)
@@ -162,6 +162,7 @@ runtime::ccpu::CCPUExternalFunction::CCPUExternalFunction(
     , m_emit_timing(false)
     , m_function_name(function->get_name())
     , m_is_built(false)
+    , m_backend(backend)
 {
 }
 
@@ -389,6 +390,7 @@ void runtime::ccpu::CCPUExternalFunction::compile()
         R"(#include <cmath>
 #include "ngraph/except.hpp"
 #include "ngraph/runtime/aligned_buffer.hpp"
+#include "ngraph/runtime/backend.hpp"
 #include "ngraph/runtime/ccpu/ccpu_eigen_utils.hpp"
 #include "ngraph/runtime/ccpu/ccpu_kernels.hpp"
 #include "ngraph/runtime/ccpu/ccpu_runtime_context.hpp"
