@@ -63,6 +63,7 @@ if (NGRAPH_CCPU_ENABLE)
 
     add_library(ccpu_backend SHARED ${SRC})
     set_target_properties(ccpu_backend PROPERTIES VERSION ${NGRAPH_VERSION})
+    set_source_files_properties(ccpu_emitter.cpp PROPERTIES COMPILE_FLAGS "-fpermissive")
 
     if(NGRAPH_DISTRIBUTED_ENABLE)
         find_package(MPI REQUIRED)
