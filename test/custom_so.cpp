@@ -15,15 +15,15 @@
 //*****************************************************************************
 
 #include "ngraph/runtime/backend.hpp"
-#include "ngraph/runtime/tensor_view.hpp"
 #include "ngraph/runtime/interpreter/int_backend.hpp"
+#include "ngraph/runtime/tensor_view.hpp"
 
 using namespace std;
 using namespace ngraph;
 
 extern "C" void execute(runtime::Backend* backend,
-                const std::vector<std::shared_ptr<runtime::TensorView>>& out,
-                const std::vector<std::shared_ptr<runtime::TensorView>>& args)
+                        const std::vector<std::shared_ptr<runtime::TensorView>>& out,
+                        const std::vector<std::shared_ptr<runtime::TensorView>>& args)
 {
     if (dynamic_cast<runtime::interpreter::INTBackend*>(backend))
     {
@@ -33,8 +33,7 @@ extern "C" void execute(runtime::Backend* backend,
             dynamic_pointer_cast<runtime::HostTensorView>(args[1])->get_data_ptr<float>();
         const float* arg2 =
             dynamic_pointer_cast<runtime::HostTensorView>(args[2])->get_data_ptr<float>();
-        float* out0 =
-            dynamic_pointer_cast<runtime::HostTensorView>(out[0])->get_data_ptr<float>();
+        float* out0 = dynamic_pointer_cast<runtime::HostTensorView>(out[0])->get_data_ptr<float>();
         size_t size = out[0]->get_element_count();
         for (size_t i = 0; i < size; i++)
         {

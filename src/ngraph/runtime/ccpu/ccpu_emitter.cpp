@@ -24,7 +24,6 @@
 #include <vector>
 #include "ngraph/node.hpp"
 #include "ngraph/op/abs.hpp"
-#include "ngraph/op/custom.hpp"
 #include "ngraph/op/acos.hpp"
 #include "ngraph/op/add.hpp"
 #include "ngraph/op/allreduce.hpp"
@@ -43,6 +42,7 @@
 #include "ngraph/op/convolution.hpp"
 #include "ngraph/op/cos.hpp"
 #include "ngraph/op/cosh.hpp"
+#include "ngraph/op/custom.hpp"
 #include "ngraph/op/divide.hpp"
 #include "ngraph/op/dot.hpp"
 #include "ngraph/op/equal.hpp"
@@ -3751,12 +3751,18 @@ namespace ngraph
 
             template <>
             void CCPUEmitter::emit<ngraph::op::Custom>(CCPUExternalFunction* external_function,
-                                                   codegen::CodeWriter& writer,
-                                                   const ngraph::Node* node,
-                                                   const std::vector<TensorViewWrapper>& args,
-                                                   const std::vector<TensorViewWrapper>& out)
+                                                       codegen::CodeWriter& writer,
+                                                       const ngraph::Node* node,
+                                                       const std::vector<TensorViewWrapper>& args,
+                                                       const std::vector<TensorViewWrapper>& out)
             {
+                const ngraph::op::Custom* custom_op = static_cast<const ngraph::op::Custom*>(node);
                 writer << "// CustomOp\n";
+                writer << "auto " << custom_op->get_name()
+                       << " = static_cast<void(*)(runtime::Backend* backend,\n";
+                writer << "    const std::vector<std::shared_ptr<runtime::TensorView>>& out,\n";
+                writer << "    const std::vector<std::shared_ptr<runtime::TensorView>>& args)>"
+                       << custom_op->get_exec_ptr("CCPU") << ";\n";
             }
 
 #define TI(x) std::type_index(typeid(x))

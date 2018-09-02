@@ -41,6 +41,14 @@ op::Custom::execute_t op::Custom::get_exec(const std::string& backend_name) cons
     return it->second;
 }
 
+void* op::Custom::get_exec_ptr(const std::string& backend_name) const
+{
+    auto exec = get_exec(backend_name);
+    return exec.target<void (*)(runtime::Backend * backend,
+                                const std::vector<std::shared_ptr<runtime::TensorView>>& out,
+                                const std::vector<std::shared_ptr<runtime::TensorView>>& args)>();
+}
+
 void op::Custom::generate_adjoints(autodiff::Adjoints& adjoints, const NodeVector& deltas)
 {
 }

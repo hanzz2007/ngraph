@@ -20,8 +20,8 @@
 #include <memory>
 #include <string>
 
-#include "ngraph/runtime/tensor_view.hpp"
 #include "ngraph/op/op.hpp"
+#include "ngraph/runtime/tensor_view.hpp"
 
 namespace ngraph
 {
@@ -45,6 +45,7 @@ namespace ngraph
             void register_exec(const std::string& backend, execute_t);
 
             execute_t get_exec(const std::string& backend_name) const;
+            void* get_exec_ptr(const std::string& backend_name) const;
 
         protected:
             virtual void generate_adjoints(autodiff::Adjoints& adjoints,

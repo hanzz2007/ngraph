@@ -14,11 +14,11 @@
 * limitations under the License.
 *******************************************************************************/
 
+#include <dlfcn.h>
 #include <random>
 #include <sstream>
 #include <string>
 #include <vector>
-#include <dlfcn.h>
 
 #include "gtest/gtest.h"
 #include "ngraph/log.hpp"
@@ -35,12 +35,15 @@ class AbcOp : public op::Custom
 {
 public:
     AbcOp(const std::shared_ptr<Node>& arg0,
-           const std::shared_ptr<Node>& arg1,
-           const std::shared_ptr<Node>& arg2)
+          const std::shared_ptr<Node>& arg1,
+          const std::shared_ptr<Node>& arg2)
         : Custom("ABC", {arg0, arg1, arg2})
     {
         register_exec(
             "INTERPRETER",
+            bind(&AbcOp::execute, this, placeholders::_1, placeholders::_2, placeholders::_3));
+        register_exec(
+            "CCPU",
             bind(&AbcOp::execute, this, placeholders::_1, placeholders::_2, placeholders::_3));
 
         if (arg0->get_element_type() != arg1->get_element_type() ||
@@ -154,13 +157,12 @@ TEST(custom_op, unsupported)
     EXPECT_ANY_THROW(backend->call_with_validate(f, {result}, {}));
 }
 
-
 class SoOp : public op::Custom
 {
 public:
     SoOp(const std::shared_ptr<Node>& arg0,
-           const std::shared_ptr<Node>& arg1,
-           const std::shared_ptr<Node>& arg2)
+         const std::shared_ptr<Node>& arg1,
+         const std::shared_ptr<Node>& arg2)
         : Custom("SO", {arg0, arg1, arg2})
     {
         register_exec(
@@ -187,10 +189,11 @@ public:
         {
             throw runtime_error("library not found");
         }
-        m_execute =
-            reinterpret_cast<void (*)(runtime::Backend* backend,
-                const std::vector<std::shared_ptr<runtime::TensorView>>& out,
-                const std::vector<std::shared_ptr<runtime::TensorView>>& args)>(dlsym(handle, "execute"));
+        m_execute = reinterpret_cast<void (*)(
+            runtime::Backend * backend,
+            const std::vector<std::shared_ptr<runtime::TensorView>>& out,
+            const std::vector<std::shared_ptr<runtime::TensorView>>& args)>(
+            dlsym(handle, "execute"));
         if (!m_execute)
         {
             throw runtime_error("test library not found");

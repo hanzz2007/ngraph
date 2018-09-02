@@ -57,6 +57,7 @@
 #include "ngraph/op/convolution.hpp"
 #include "ngraph/op/cos.hpp"
 #include "ngraph/op/cosh.hpp"
+#include "ngraph/op/custom.hpp"
 #include "ngraph/op/divide.hpp"
 #include "ngraph/op/dot.hpp"
 #include "ngraph/op/equal.hpp"
@@ -101,7 +102,6 @@
 #include "ngraph/op/sin.hpp"
 #include "ngraph/op/sinh.hpp"
 #include "ngraph/op/slice.hpp"
-#include "ngraph/op/custom.hpp"
 #include "ngraph/op/softmax.hpp"
 #include "ngraph/op/sqrt.hpp"
 #include "ngraph/op/subtract.hpp"
@@ -1007,11 +1007,11 @@ runtime::cpu::OpFunction runtime::cpu::CCPUExternalFunction::dispatcher_lookup(c
     {
         if (auto op = dynamic_cast<const ngraph::op::Custom*>(&node))
         {
-           handler = dispatcher.find(type_index(typeid(ngraph::op::Custom)));
+            handler = dispatcher.find(type_index(typeid(ngraph::op::Custom)));
         }
         else
         {
-        throw ngraph_error("Unhandled op during function emit : " + node.description());
+            throw ngraph_error("Unhandled op during function emit : " + node.description());
         }
     }
     return handler->second;

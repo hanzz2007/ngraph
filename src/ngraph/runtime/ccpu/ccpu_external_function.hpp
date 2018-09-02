@@ -158,7 +158,6 @@ namespace ngraph
                 std::string strip_comments(const std::string&);
                 OpFunction dispatcher_lookup(const Node& node);
 
-
                 void release_function() { m_function = nullptr; }
                 std::shared_ptr<ngraph::Function> m_function;
                 bool m_release_function;
