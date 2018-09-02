@@ -211,7 +211,7 @@ static string emit_string_array(const vector<string>& s, size_t max_line_length)
 
 static StaticInitializers s_static_initializers;
 
-#define TI(x) type_index(typeid(x)).name()
+#define TI(x) type_index(typeid(x))
 #define ADD_OP(a)                                                                                  \
     {                                                                                              \
         TI(ngraph::op::a), &ngraph::runtime::ccpu::CCPUEmitter::emit<ngraph::op::a>                \
@@ -1000,33 +1000,17 @@ bool runtime::ccpu::CCPUExternalFunction::is_functionally_identical(
 
 runtime::ccpu::OpFunction runtime::ccpu::CCPUExternalFunction::dispatcher_lookup(const Node& node)
 {
-    string node_name = type_index(typeid(node)).name();
-    NGRAPH_INFO << "looking for node " << node_name;
-    for (auto x : dispatcher)
-    {
-        if (node_name == x.first)
-        {
-            NGRAPH_INFO << "FOUND NODE " << node_name;
-        }
-    }
-
-    auto handler = dispatcher.find(node_name);
+    auto handler = dispatcher.find(type_index(typeid(node)));
     if (handler == dispatcher.end())
     {
-        NGRAPH_INFO;
         if (auto op = dynamic_cast<const ngraph::op::Custom*>(&node))
         {
-            node_name = type_index(typeid(ngraph::op::Custom)).name();
-            NGRAPH_INFO << "custom op " << node_name;
-            handler = dispatcher.find(node_name);
+            handler = dispatcher.find(type_index(typeid(ngraph::op::Custom)));
         }
         else
         {
             throw ngraph_error("Unhandled op during function emit : " + node.description());
         }
-    }
-    else
-    {
     }
     return handler->second;
 }

@@ -52,7 +52,7 @@ namespace ngraph
                                                   const std::vector<TensorViewWrapper>& inputs,
                                                   const std::vector<TensorViewWrapper>& outputs)>;
 
-            using OpMap = std::unordered_map<std::string, OpFunction>;
+            using OpMap = std::unordered_map<std::type_index, OpFunction>;
 
             struct OpAttributes;
             class CCPUExternalFunction;
