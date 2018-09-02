@@ -216,6 +216,11 @@ static StaticInitializers s_static_initializers;
     {                                                                                              \
         TI(ngraph::op::a), &ngraph::runtime::ccpu::CCPUEmitter::emit<ngraph::op::a>                \
     }
+#define ADD_BACKEND_OP(a)                                                                          \
+    {                                                                                              \
+        TI(ngraph::runtime::ccpu::op::a)                                                           \
+        , &ngraph::runtime::ccpu::CCPUEmitter::emit<ngraph::runtime::ccpu::op::a>                  \
+    }
 
 static const runtime::ccpu::OpMap dispatcher{
     ADD_OP(Abs),
@@ -308,10 +313,8 @@ static const runtime::ccpu::OpMap dispatcher{
     ADD_OP(Sum),
     ADD_OP(Tan),
     ADD_OP(Tanh),
-    {TI(ngraph::runtime::ccpu::op::LoopKernel),
-     &runtime::ccpu::CCPUEmitter::emit<runtime::ccpu::op::LoopKernel>},
-    {TI(ngraph::runtime::ccpu::op::ConvertLayout),
-     &runtime::ccpu::CCPUEmitter::emit<runtime::ccpu::op::ConvertLayout>},
+    ADD_BACKEND_OP(LoopKernel),
+    ADD_BACKEND_OP(ConvertLayout),
 };
 
 static void
