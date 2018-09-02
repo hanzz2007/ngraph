@@ -101,6 +101,7 @@
 #include "ngraph/op/sin.hpp"
 #include "ngraph/op/sinh.hpp"
 #include "ngraph/op/slice.hpp"
+#include "ngraph/op/custom.hpp"
 #include "ngraph/op/softmax.hpp"
 #include "ngraph/op/sqrt.hpp"
 #include "ngraph/op/subtract.hpp"
@@ -312,6 +313,7 @@ static const runtime::cpu::OpMap dispatcher{
     {TI(ngraph::runtime::cpu::op::LoopKernel),
      &runtime::cpu::CCPUEmitter::emit<runtime::cpu::op::LoopKernel>},
     {TI(ngraph::op::LRN), &runtime::cpu::CCPUEmitter::emit<ngraph::op::LRN>},
+    {TI(ngraph::op::Custom), &runtime::cpu::CCPUEmitter::emit<ngraph::op::Custom>},
 };
 
 static void
@@ -653,11 +655,7 @@ using namespace ngraph::runtime;
         {
             auto& n = *node; // Work around a compiler warning (*node inside typeid may have effects
             // with shared pointers, which is fine here but clang doesn't like it.)
-            auto handler = dispatcher.find(type_index(typeid(n)));
-            if (handler == dispatcher.end())
-            {
-                throw ngraph_error("Unhandled op during code generation : " + node->description());
-            }
+            auto handler = dispatcher_lookup(n);
             vector<TensorViewWrapper> in;
             vector<string> node_input_names;
             vector<string> node_output_names;
@@ -702,7 +700,7 @@ using namespace ngraph::runtime;
             auto it = node_function_map.find(node.get());
             if (it == node_function_map.end())
             {
-                handler->second(this, writer, node.get(), in, out);
+                handler(this, writer, node.get(), in, out);
             }
             else
             {
@@ -1002,6 +1000,23 @@ bool runtime::cpu::CCPUExternalFunction::is_functionally_identical(
     return node_cache.at(&n1) == node_cache.at(&n2);
 }
 
+runtime::cpu::OpFunction runtime::cpu::CCPUExternalFunction::dispatcher_lookup(const Node& node)
+{
+    auto handler = dispatcher.find(type_index(typeid(node)));
+    if (handler == dispatcher.end())
+    {
+        if (auto op = dynamic_cast<const ngraph::op::Custom*>(&node))
+        {
+           handler = dispatcher.find(type_index(typeid(ngraph::op::Custom)));
+        }
+        else
+        {
+        throw ngraph_error("Unhandled op during function emit : " + node.description());
+        }
+    }
+    return handler->second;
+}
+
 string runtime::cpu::CCPUExternalFunction::emit_op_as_function(const Node& node,
                                                                const string& function_name)
 {
@@ -1010,11 +1025,7 @@ string runtime::cpu::CCPUExternalFunction::emit_op_as_function(const Node& node,
     writer.indent++;
     // Work around a compiler warning (*node inside typeid may have effects
     // with shared pointers, which is fine here but clang doesn't like it.)
-    auto handler = dispatcher.find(type_index(typeid(node)));
-    if (handler == dispatcher.end())
-    {
-        throw ngraph_error("Unhandled op during function emit : " + node.description());
-    }
+    auto handler = dispatcher_lookup(node);
     vector<TensorViewWrapper> in;
     size_t arg_index = 0;
     set<string> arg_names;
@@ -1053,7 +1064,7 @@ string runtime::cpu::CCPUExternalFunction::emit_op_as_function(const Node& node,
     writer << "\n)\n";
     writer << "{\n";
     writer.indent++;
-    handler->second(this, writer, &node, in, out);
+    handler(this, writer, &node, in, out);
     writer.indent--;
     writer << "}\n";
 

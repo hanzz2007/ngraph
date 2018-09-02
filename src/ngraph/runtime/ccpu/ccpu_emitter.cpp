@@ -24,6 +24,7 @@
 #include <vector>
 #include "ngraph/node.hpp"
 #include "ngraph/op/abs.hpp"
+#include "ngraph/op/custom.hpp"
 #include "ngraph/op/acos.hpp"
 #include "ngraph/op/add.hpp"
 #include "ngraph/op/allreduce.hpp"
@@ -3746,6 +3747,16 @@ namespace ngraph
                        << "                      " << args[1].get_name() << ",\n"
                        << "                      " << out[0].get_name() << ",\n"
                        << "                      " << out[0].get_size() << ");\n";
+            }
+
+            template <>
+            void CCPUEmitter::emit<ngraph::op::Custom>(CCPUExternalFunction* external_function,
+                                                   codegen::CodeWriter& writer,
+                                                   const ngraph::Node* node,
+                                                   const std::vector<TensorViewWrapper>& args,
+                                                   const std::vector<TensorViewWrapper>& out)
+            {
+                writer << "// CustomOp\n";
             }
 
 #define TI(x) std::type_index(typeid(x))

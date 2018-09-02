@@ -109,6 +109,9 @@ if(NGRAPH_ADDRESS_SANITIZER)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -fsanitize=address -fno-omit-frame-pointer")
 endif()
 
+add_library(custom_op_library SHARED custom_so.cpp)
+target_link_libraries(custom_op_library PRIVATE ngraph)
+
 if(NGRAPH_DISTRIBUTED_ENABLE)
     find_package(MPI REQUIRED)
     add_definitions(-DNGRAPH_DISTRIBUTED)
@@ -118,6 +121,7 @@ if(NGRAPH_DISTRIBUTED_ENABLE)
 endif()
 
 add_executable(unit-test ${SRC})
+add_dependencies(unit-test custom_op_library)
 target_link_libraries(unit-test ngraph_test_util)
 target_link_libraries(unit-test ngraph libgtest libjson pthread)
 target_link_libraries(unit-test ${CMAKE_DL_LIBS})
