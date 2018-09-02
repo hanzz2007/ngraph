@@ -21,34 +21,34 @@
 using namespace std;
 using namespace ngraph;
 
-runtime::cpu::TensorViewWrapper::TensorViewWrapper(const shared_ptr<descriptor::TensorView>& tv,
-                                                   const string& alias)
+runtime::ccpu::TensorViewWrapper::TensorViewWrapper(const shared_ptr<descriptor::TensorView>& tv,
+                                                    const string& alias)
     : m_tensor_view(tv)
     , m_alias(alias)
 {
 }
 
-size_t runtime::cpu::TensorViewWrapper::get_size() const
+size_t runtime::ccpu::TensorViewWrapper::get_size() const
 {
     return m_tensor_view->get_tensor_view_layout()->get_size();
 }
 
-const Shape& runtime::cpu::TensorViewWrapper::get_shape() const
+const Shape& runtime::ccpu::TensorViewWrapper::get_shape() const
 {
     return m_tensor_view->get_tensor_view_layout()->get_shape();
 }
 
-const Strides& runtime::cpu::TensorViewWrapper::get_strides() const
+const Strides& runtime::ccpu::TensorViewWrapper::get_strides() const
 {
     return m_tensor_view->get_tensor_view_layout()->get_strides();
 }
 
-const element::Type& runtime::cpu::TensorViewWrapper::get_element_type() const
+const element::Type& runtime::ccpu::TensorViewWrapper::get_element_type() const
 {
     return m_tensor_view->get_tensor_view_layout()->get_element_type();
 }
 
-const std::string& runtime::cpu::TensorViewWrapper::get_name() const
+const std::string& runtime::ccpu::TensorViewWrapper::get_name() const
 {
     if (m_alias.empty())
     {
@@ -60,13 +60,13 @@ const std::string& runtime::cpu::TensorViewWrapper::get_name() const
     }
 }
 
-const std::string& runtime::cpu::TensorViewWrapper::get_type() const
+const std::string& runtime::ccpu::TensorViewWrapper::get_type() const
 {
     return get_element_type().c_type_string();
 }
 
 const std::shared_ptr<descriptor::TensorView>
-    runtime::cpu::TensorViewWrapper::get_tensor_view() const
+    runtime::ccpu::TensorViewWrapper::get_tensor_view() const
 {
     return m_tensor_view;
 }

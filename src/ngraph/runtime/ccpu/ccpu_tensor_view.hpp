@@ -28,7 +28,7 @@ namespace ngraph
 {
     namespace runtime
     {
-        namespace cpu
+        namespace ccpu
         {
             class CCPUTensorView : public ngraph::runtime::TensorView
             {

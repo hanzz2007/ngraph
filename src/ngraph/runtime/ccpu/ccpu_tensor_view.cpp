@@ -31,10 +31,10 @@ using namespace std;
 // TODO(jmenon): Refactor all the alignment specifications into
 // a single place and allow lower or no alignment when possible
 
-runtime::cpu::CCPUTensorView::CCPUTensorView(const ngraph::element::Type& element_type,
-                                             const Shape& shape,
-                                             void* memory_pointer,
-                                             const string& name)
+runtime::ccpu::CCPUTensorView::CCPUTensorView(const ngraph::element::Type& element_type,
+                                              const Shape& shape,
+                                              void* memory_pointer,
+                                              const string& name)
     : runtime::TensorView(
           std::make_shared<ngraph::descriptor::TensorView>(element_type, shape, name))
     , buffer(nullptr)
@@ -44,7 +44,7 @@ runtime::cpu::CCPUTensorView::CCPUTensorView(const ngraph::element::Type& elemen
     // because of how some unit test functionality is written (ex. 'backprop_derivative')
     // This needs to be removed
     m_descriptor->set_tensor_view_layout(
-        std::make_shared<runtime::cpu::LayoutDescriptor>(*m_descriptor));
+        std::make_shared<runtime::ccpu::LayoutDescriptor>(*m_descriptor));
 
     buffer_size = shape_size(shape) * element_type.size();
 
@@ -75,29 +75,29 @@ runtime::cpu::CCPUTensorView::CCPUTensorView(const ngraph::element::Type& elemen
     }
 }
 
-runtime::cpu::CCPUTensorView::CCPUTensorView(const ngraph::element::Type& element_type,
-                                             const Shape& shape,
-                                             const string& name)
+runtime::ccpu::CCPUTensorView::CCPUTensorView(const ngraph::element::Type& element_type,
+                                              const Shape& shape,
+                                              const string& name)
     : CCPUTensorView(element_type, shape, nullptr, name)
 {
 }
 
-runtime::cpu::CCPUTensorView::~CCPUTensorView()
+runtime::ccpu::CCPUTensorView::~CCPUTensorView()
 {
     free(buffer);
 }
 
-char* runtime::cpu::CCPUTensorView::get_data_ptr()
+char* runtime::ccpu::CCPUTensorView::get_data_ptr()
 {
     return aligned_buffer;
 }
 
-const char* runtime::cpu::CCPUTensorView::get_data_ptr() const
+const char* runtime::ccpu::CCPUTensorView::get_data_ptr() const
 {
     return aligned_buffer;
 }
 
-void runtime::cpu::CCPUTensorView::write(const void* source, size_t tensor_offset, size_t n)
+void runtime::ccpu::CCPUTensorView::write(const void* source, size_t tensor_offset, size_t n)
 {
     if (tensor_offset + n > buffer_size)
     {
@@ -107,7 +107,7 @@ void runtime::cpu::CCPUTensorView::write(const void* source, size_t tensor_offse
     memcpy(&target[tensor_offset], source, n);
 }
 
-void runtime::cpu::CCPUTensorView::read(void* target, size_t tensor_offset, size_t n) const
+void runtime::ccpu::CCPUTensorView::read(void* target, size_t tensor_offset, size_t n) const
 {
     if (tensor_offset + n > buffer_size)
     {
@@ -115,7 +115,7 @@ void runtime::cpu::CCPUTensorView::read(void* target, size_t tensor_offset, size
     }
 
     auto tvl = this->get_tensor_view_layout();
-    auto cpu_tvl = dynamic_cast<runtime::cpu::LayoutDescriptor*>(tvl.get());
+    auto cpu_tvl = dynamic_cast<runtime::ccpu::LayoutDescriptor*>(tvl.get());
 
     auto needs_conversion = [&]() {
         if (!cpu_tvl)
@@ -159,7 +159,7 @@ void runtime::cpu::CCPUTensorView::read(void* target, size_t tensor_offset, size
     }
 }
 
-size_t runtime::cpu::CCPUTensorView::get_size() const
+size_t runtime::ccpu::CCPUTensorView::get_size() const
 {
     return get_element_count();
 }

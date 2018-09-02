@@ -25,14 +25,14 @@ namespace ngraph
 {
     namespace runtime
     {
-        namespace cpu
+        namespace ccpu
         {
             class TensorViewWrapper;
         }
     }
 }
 
-class ngraph::runtime::cpu::TensorViewWrapper
+class ngraph::runtime::ccpu::TensorViewWrapper
 {
 public:
     TensorViewWrapper(const std::shared_ptr<descriptor::TensorView>&,

@@ -24,20 +24,20 @@
 using namespace std;
 using namespace ngraph;
 
-runtime::cpu::CCPUCallFrame::CCPUCallFrame(std::shared_ptr<CCPUExternalFunction> external_function,
-                                           EntryPoint compiled_function)
+runtime::ccpu::CCPUCallFrame::CCPUCallFrame(std::shared_ptr<CCPUExternalFunction> external_function,
+                                            EntryPoint compiled_function)
     : m_external_function(external_function)
     , m_compiled_function(compiled_function)
 {
     setup_runtime_context();
 }
 
-runtime::cpu::CCPUCallFrame::~CCPUCallFrame()
+runtime::ccpu::CCPUCallFrame::~CCPUCallFrame()
 {
     cleanup_runtime_context();
 }
 
-void runtime::cpu::CCPUCallFrame::call(
+void runtime::ccpu::CCPUCallFrame::call(
     const std::vector<std::shared_ptr<runtime::TensorView>>& output_tvs,
     const std::vector<std::shared_ptr<runtime::TensorView>>& input_tvs)
 {
@@ -48,15 +48,15 @@ void runtime::cpu::CCPUCallFrame::call(
 
     for (size_t i = 0; i < input_tvs.size(); i++)
     {
-        shared_ptr<runtime::cpu::CCPUTensorView> tv =
-            static_pointer_cast<runtime::cpu::CCPUTensorView>(input_tvs[i]);
+        shared_ptr<runtime::ccpu::CCPUTensorView> tv =
+            static_pointer_cast<runtime::ccpu::CCPUTensorView>(input_tvs[i]);
         ctx->p_en[i] = tv->get_stale();
         inputs.push_back(tv->get_data_ptr());
     }
     for (size_t i = 0; i < output_tvs.size(); i++)
     {
-        shared_ptr<runtime::cpu::CCPUTensorView> tv =
-            static_pointer_cast<runtime::cpu::CCPUTensorView>(output_tvs[i]);
+        shared_ptr<runtime::ccpu::CCPUTensorView> tv =
+            static_pointer_cast<runtime::ccpu::CCPUTensorView>(output_tvs[i]);
         outputs.push_back(tv->get_data_ptr());
     }
 
@@ -64,7 +64,7 @@ void runtime::cpu::CCPUCallFrame::call(
     m_compiled_function(inputs.data(), outputs.data(), ctx);
 }
 
-void runtime::cpu::CCPUCallFrame::propagate_layouts(
+void runtime::ccpu::CCPUCallFrame::propagate_layouts(
     const std::vector<std::shared_ptr<runtime::TensorView>>& tvs,
     const LayoutDescriptorPtrs& layouts) const
 {
@@ -84,14 +84,14 @@ void runtime::cpu::CCPUCallFrame::propagate_layouts(
     }
 }
 
-void runtime::cpu::CCPUCallFrame::setup_runtime_context()
+void runtime::ccpu::CCPUCallFrame::setup_runtime_context()
 {
     ctx = new CCPURuntimeContext;
 
     ctx->p_en = new bool[m_external_function->get_parameter_layout_descriptors().size()];
 
     // Create temporary buffer pools
-    size_t alignment = runtime::cpu::CCPUExternalFunction::s_memory_pool_alignment;
+    size_t alignment = runtime::ccpu::CCPUExternalFunction::s_memory_pool_alignment;
     for (auto buffer_size : m_external_function->get_memory_buffer_sizes())
     {
         auto buffer = new AlignedBuffer(buffer_size, alignment);
@@ -102,7 +102,7 @@ void runtime::cpu::CCPUCallFrame::setup_runtime_context()
     ctx->mkldnn_workspaces = mkldnn_emitter->get_mkldnn_workspaces().data();
 }
 
-void runtime::cpu::CCPUCallFrame::cleanup_runtime_context()
+void runtime::ccpu::CCPUCallFrame::cleanup_runtime_context()
 {
     delete[] ctx->p_en;
     for (auto buffer : ctx->memory_buffers)

@@ -111,7 +111,7 @@ static bool init_cblas_arg(std::shared_ptr<ngraph::Node> reshape,
     return true;
 }
 
-void ngraph::runtime::cpu::pass::CPUFusion::construct_matmulbias()
+void ngraph::runtime::ccpu::pass::CPUFusion::construct_matmulbias()
 {
     Shape shape_w{2, 4};
     Shape shape_x{4, 1};
@@ -152,7 +152,7 @@ void ngraph::runtime::cpu::pass::CPUFusion::construct_matmulbias()
     this->add_matcher(m);
 }
 
-void ngraph::runtime::cpu::pass::CPUFusion::construct_matmul()
+void ngraph::runtime::ccpu::pass::CPUFusion::construct_matmul()
 {
     Shape shape_w{2, 4};
     Shape shape_x{4, 1};
@@ -225,7 +225,7 @@ void ngraph::runtime::cpu::pass::CPUFusion::construct_matmul()
     this->add_matcher(m);
 }
 
-void ngraph::runtime::cpu::pass::CPUFusion::construct_fprop_bn()
+void ngraph::runtime::ccpu::pass::CPUFusion::construct_fprop_bn()
 {
     // construct varaiance
     auto N = op::Constant::create(element::f32, Shape{3}, {2, 2, 2});
@@ -376,7 +376,7 @@ static bool
     return true;
 }
 
-void ngraph::runtime::cpu::pass::CPUFusion::construct_zero_padded_reshaped_conv()
+void ngraph::runtime::ccpu::pass::CPUFusion::construct_zero_padded_reshaped_conv()
 {
     auto pad_input = std::make_shared<pattern::op::Label>(element::f32, Shape{});
     auto pad_value = std::make_shared<pattern::op::Label>(element::f32, Shape{});
@@ -457,7 +457,7 @@ void ngraph::runtime::cpu::pass::CPUFusion::construct_zero_padded_reshaped_conv(
     this->add_matcher(std::make_shared<ngraph::pattern::Matcher>(conv_label, callback));
 }
 
-void ngraph::runtime::cpu::pass::CPUFusion::construct_zero_padded_conv()
+void ngraph::runtime::ccpu::pass::CPUFusion::construct_zero_padded_conv()
 {
     auto pad_input = std::make_shared<pattern::op::Label>(element::f32, Shape{1, 1, 1, 1});
     auto pad_value = std::make_shared<pattern::op::Label>(element::f32, Shape{});
@@ -521,7 +521,7 @@ void ngraph::runtime::cpu::pass::CPUFusion::construct_zero_padded_conv()
     this->add_matcher(std::make_shared<ngraph::pattern::Matcher>(conv_label, callback));
 }
 
-void ngraph::runtime::cpu::pass::CPUFusion::construct_zero_padded_conv_backprop_filters()
+void ngraph::runtime::ccpu::pass::CPUFusion::construct_zero_padded_conv_backprop_filters()
 {
     auto pad_input = std::make_shared<pattern::op::Label>(element::f32, Shape{1, 1, 1, 1});
     auto pad_value = std::make_shared<pattern::op::Label>(element::f32, Shape{});
@@ -588,7 +588,7 @@ void ngraph::runtime::cpu::pass::CPUFusion::construct_zero_padded_conv_backprop_
     this->add_matcher(std::make_shared<ngraph::pattern::Matcher>(conv_label, callback));
 }
 
-void ngraph::runtime::cpu::pass::CPUFusion::construct_conv_bias()
+void ngraph::runtime::ccpu::pass::CPUFusion::construct_conv_bias()
 {
     Shape shape{2, 2, 1, 1};
     auto data_batch = std::make_shared<pattern::op::Label>(element::f32, shape);
@@ -644,7 +644,7 @@ void ngraph::runtime::cpu::pass::CPUFusion::construct_conv_bias()
     this->add_matcher(m);
 }
 
-void ngraph::runtime::cpu::pass::CPUFusion::construct_conv_bias_bprop()
+void ngraph::runtime::ccpu::pass::CPUFusion::construct_conv_bias_bprop()
 {
     Shape shape{2, 2, 1, 1};
     auto data_batch = std::make_shared<pattern::op::Label>(element::f32, shape);
@@ -726,7 +726,7 @@ void ngraph::runtime::cpu::pass::CPUFusion::construct_conv_bias_bprop()
     this->add_matcher(m);
 }
 
-void ngraph::runtime::cpu::pass::CPUFusion::construct_batch_norm_relu()
+void ngraph::runtime::ccpu::pass::CPUFusion::construct_batch_norm_relu()
 {
     auto input_shape = Shape{1, 2, 2, 2};
     auto input = std::make_shared<pattern::op::Label>(element::f32, input_shape);
@@ -794,7 +794,7 @@ void ngraph::runtime::cpu::pass::CPUFusion::construct_batch_norm_relu()
     this->add_matcher(m);
 }
 
-void ngraph::runtime::cpu::pass::CPUFusion::construct_batch_norm_relu_global_stats()
+void ngraph::runtime::ccpu::pass::CPUFusion::construct_batch_norm_relu_global_stats()
 {
     auto input_shape = Shape{1, 2, 2, 2};
     auto input = std::make_shared<pattern::op::Label>(element::f32, input_shape);
@@ -852,7 +852,7 @@ void ngraph::runtime::cpu::pass::CPUFusion::construct_batch_norm_relu_global_sta
     this->add_matcher(m);
 }
 
-void ngraph::runtime::cpu::pass::CPUFusion::construct_conv_relu()
+void ngraph::runtime::ccpu::pass::CPUFusion::construct_conv_relu()
 {
     Shape shape{2, 2, 1, 1};
     auto data_batch = std::make_shared<pattern::op::Label>(element::f32, shape);
@@ -917,7 +917,7 @@ void ngraph::runtime::cpu::pass::CPUFusion::construct_conv_relu()
     this->add_matcher(m);
 }
 
-void ngraph::runtime::cpu::pass::CPUFusion::construct_conv_bias_relu()
+void ngraph::runtime::ccpu::pass::CPUFusion::construct_conv_bias_relu()
 {
     Shape shape{2, 2, 1, 1};
     auto data_batch = std::make_shared<pattern::op::Label>(element::f32, shape);
@@ -993,7 +993,7 @@ void ngraph::runtime::cpu::pass::CPUFusion::construct_conv_bias_relu()
     this->add_matcher(m);
 }
 
-void ngraph::runtime::cpu::pass::CPUFusion::construct_conv_bias_add()
+void ngraph::runtime::ccpu::pass::CPUFusion::construct_conv_bias_add()
 {
     Shape shape{2, 2, 1, 1};
     auto data_batch = std::make_shared<pattern::op::Label>(element::f32, shape);
@@ -1095,7 +1095,7 @@ void ngraph::runtime::cpu::pass::CPUFusion::construct_conv_bias_add()
     this->add_matcher(m);
 }
 
-void ngraph::runtime::cpu::pass::CPUFusion::construct_conv_bias_add_relu()
+void ngraph::runtime::ccpu::pass::CPUFusion::construct_conv_bias_add_relu()
 {
     Shape shape{2, 2, 1, 1};
     auto data_batch = std::make_shared<pattern::op::Label>(element::f32, shape);
@@ -1158,7 +1158,7 @@ void ngraph::runtime::cpu::pass::CPUFusion::construct_conv_bias_add_relu()
     this->add_matcher(m);
 }
 
-void ngraph::runtime::cpu::pass::CPUFusion::construct_sigmoid_multiply()
+void ngraph::runtime::ccpu::pass::CPUFusion::construct_sigmoid_multiply()
 {
     // Construct predicate to match sigmoid and tanh
     auto sigmoid_pred = [](std::shared_ptr<Node> n) {
@@ -1221,7 +1221,7 @@ void ngraph::runtime::cpu::pass::CPUFusion::construct_sigmoid_multiply()
     this->add_matcher(m);
 }
 
-void ngraph::runtime::cpu::pass::CPUFusion::construct_bounded_relu()
+void ngraph::runtime::ccpu::pass::CPUFusion::construct_bounded_relu()
 {
     auto relu_input = std::make_shared<pattern::op::Label>(element::f32, Shape{});
     auto relu = std::make_shared<op::Relu>(relu_input);

@@ -21,14 +21,14 @@
 #include "ngraph/runtime/ccpu/ccpu_tensor_view.hpp"
 
 #define ASSIGN_DECL(op_name)                                                                       \
-    assign<op_name>(ngraph::runtime::cpu::CCPUExternalFunction * external_function,                \
+    assign<op_name>(ngraph::runtime::ccpu::CCPUExternalFunction * external_function,               \
                     ngraph::Node * node)
 
 namespace ngraph
 {
     namespace runtime
     {
-        namespace cpu
+        namespace ccpu
         {
             namespace pass
             {
@@ -49,7 +49,7 @@ namespace ngraph
 
                     template <typename OP>
                     static void
-                        assign(ngraph::runtime::cpu::CCPUExternalFunction* external_function,
+                        assign(ngraph::runtime::ccpu::CCPUExternalFunction* external_function,
                                ngraph::Node* node)
                     {
                         throw std::runtime_error("Unimplemented op in CPU assignment");

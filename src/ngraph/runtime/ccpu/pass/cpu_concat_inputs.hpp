@@ -22,7 +22,7 @@ namespace ngraph
 {
     namespace runtime
     {
-        namespace cpu
+        namespace ccpu
         {
             namespace pass
             {
@@ -32,7 +32,7 @@ namespace ngraph
     }
 }
 
-class ngraph::runtime::cpu::pass::ConcatInputs : public ngraph::pass::GraphRewrite
+class ngraph::runtime::ccpu::pass::ConcatInputs : public ngraph::pass::GraphRewrite
 {
 public:
     ConcatInputs()

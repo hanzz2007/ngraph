@@ -21,7 +21,7 @@ namespace ngraph
 {
     namespace runtime
     {
-        namespace cpu
+        namespace ccpu
         {
             namespace pass
             {
@@ -31,7 +31,7 @@ namespace ngraph
     }
 }
 
-class ngraph::runtime::cpu::pass::CPUPostLayoutOptimizations : public ngraph::pass::GraphRewrite
+class ngraph::runtime::ccpu::pass::CPUPostLayoutOptimizations : public ngraph::pass::GraphRewrite
 {
 public:
     CPUPostLayoutOptimizations()

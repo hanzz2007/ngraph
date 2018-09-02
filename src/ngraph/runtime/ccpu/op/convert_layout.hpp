@@ -22,7 +22,7 @@ namespace ngraph
 {
     namespace runtime
     {
-        namespace cpu
+        namespace ccpu
         {
             class LayoutDescriptor;
 
@@ -36,12 +36,12 @@ namespace ngraph
                 public:
                     ConvertLayout(
                         const std::shared_ptr<Node>& arg,
-                        const std::shared_ptr<ngraph::runtime::cpu::LayoutDescriptor>& layout);
+                        const std::shared_ptr<ngraph::runtime::ccpu::LayoutDescriptor>& layout);
 
                     ConvertLayout(
                         const std::shared_ptr<Node>& arg,
                         size_t output_index,
-                        const std::shared_ptr<ngraph::runtime::cpu::LayoutDescriptor>& layout);
+                        const std::shared_ptr<ngraph::runtime::ccpu::LayoutDescriptor>& layout);
 
                     virtual void validate_and_infer_types() override;
 
@@ -50,7 +50,7 @@ namespace ngraph
 
                 protected:
                     size_t arg_output_index;
-                    std::shared_ptr<ngraph::runtime::cpu::LayoutDescriptor> output_layout;
+                    std::shared_ptr<ngraph::runtime::ccpu::LayoutDescriptor> output_layout;
                 };
             }
         }

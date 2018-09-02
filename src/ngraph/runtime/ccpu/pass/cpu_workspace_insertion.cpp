@@ -71,7 +71,7 @@ static std::shared_ptr<pattern::Matcher> create_maxpool_with_indices_matcher()
     return std::make_shared<pattern::Matcher>(max_pool_bprop);
 }
 
-bool runtime::cpu::pass::CPUWorkspaceInsertion::run_on_function(std::shared_ptr<ngraph::Function> f)
+bool runtime::ccpu::pass::CPUWorkspaceInsertion::run_on_function(std::shared_ptr<ngraph::Function> f)
 {
     auto matcher = create_maxpool_with_indices_matcher();
 
@@ -92,7 +92,7 @@ bool runtime::cpu::pass::CPUWorkspaceInsertion::run_on_function(std::shared_ptr<
     return replaced;
 }
 
-bool runtime::cpu::pass::CPUWorkspaceInsertion::transform(pattern::Matcher& m)
+bool runtime::ccpu::pass::CPUWorkspaceInsertion::transform(pattern::Matcher& m)
 {
     auto data = std::dynamic_pointer_cast<pattern::op::Label>(m.get_pattern()->get_argument(0));
     auto delta = std::dynamic_pointer_cast<pattern::op::Label>(m.get_pattern()->get_argument(1));

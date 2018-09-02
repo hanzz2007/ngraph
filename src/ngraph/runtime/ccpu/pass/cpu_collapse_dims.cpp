@@ -88,7 +88,7 @@ static void collapse_dims(std::vector<size_t>& output_shape,
     }
 }
 
-bool runtime::cpu::pass::CPUCollapseDims::run_on_function(std::shared_ptr<ngraph::Function> f)
+bool runtime::ccpu::pass::CPUCollapseDims::run_on_function(std::shared_ptr<ngraph::Function> f)
 {
     bool replaced = false;
     for (auto n : f->get_ordered_ops())

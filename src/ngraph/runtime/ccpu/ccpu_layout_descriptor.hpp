@@ -30,7 +30,7 @@ namespace ngraph
 {
     namespace runtime
     {
-        namespace cpu
+        namespace ccpu
         {
             class LayoutDescriptor : public ngraph::descriptor::layout::TensorViewLayout
             {
@@ -69,7 +69,7 @@ namespace ngraph
                 size_t m_mkldnn_memory_size;
             };
 
-            typedef std::vector<std::shared_ptr<ngraph::runtime::cpu::LayoutDescriptor>>
+            typedef std::vector<std::shared_ptr<ngraph::runtime::ccpu::LayoutDescriptor>>
                 LayoutDescriptorPtrs;
         }
     }

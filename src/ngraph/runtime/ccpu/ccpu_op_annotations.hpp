@@ -22,7 +22,7 @@ namespace ngraph
 {
     namespace runtime
     {
-        namespace cpu
+        namespace ccpu
         {
             /// \brief Annotations added to graph ops by CPU backend passes
             class CCPUOpAnnotations : public ngraph::op::util::OpAnnotations

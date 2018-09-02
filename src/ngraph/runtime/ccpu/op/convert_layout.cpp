@@ -20,14 +20,14 @@
 using namespace std;
 using namespace ngraph;
 
-runtime::cpu::op::ConvertLayout::ConvertLayout(
-    const shared_ptr<Node>& arg, const shared_ptr<runtime::cpu::LayoutDescriptor>& layout)
+runtime::ccpu::op::ConvertLayout::ConvertLayout(
+    const shared_ptr<Node>& arg, const shared_ptr<runtime::ccpu::LayoutDescriptor>& layout)
     : ConvertLayout(arg, 0, layout)
 {
 }
 
 shared_ptr<Node>
-    runtime::cpu::op::ConvertLayout::copy_with_new_args(const NodeVector& new_args) const
+    runtime::ccpu::op::ConvertLayout::copy_with_new_args(const NodeVector& new_args) const
 {
     if (new_args.size() != 1)
     {
@@ -36,10 +36,10 @@ shared_ptr<Node>
     return make_shared<ConvertLayout>(new_args.at(0), output_layout);
 }
 
-runtime::cpu::op::ConvertLayout::ConvertLayout(
+runtime::ccpu::op::ConvertLayout::ConvertLayout(
     const shared_ptr<Node>& arg,
     size_t output_index,
-    const shared_ptr<runtime::cpu::LayoutDescriptor>& layout)
+    const shared_ptr<runtime::ccpu::LayoutDescriptor>& layout)
     : Op("ConvertLayout", check_single_output_args({arg}))
     , arg_output_index(output_index)
     , output_layout(layout)
@@ -47,7 +47,7 @@ runtime::cpu::op::ConvertLayout::ConvertLayout(
     constructor_validate_and_infer_types();
 }
 
-void runtime::cpu::op::ConvertLayout::validate_and_infer_types()
+void runtime::ccpu::op::ConvertLayout::validate_and_infer_types()
 {
     const auto& arg = get_argument(0);
 

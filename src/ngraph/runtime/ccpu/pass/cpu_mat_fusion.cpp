@@ -73,7 +73,7 @@ static std::shared_ptr<Node>
     return dot_label + bias_broadcast;
 }
 
-bool runtime::cpu::pass::CPURnnMatFusion::run_on_function(std::shared_ptr<Function> function)
+bool runtime::ccpu::pass::CPURnnMatFusion::run_on_function(std::shared_ptr<Function> function)
 {
     bool modified = false;
 
@@ -403,7 +403,7 @@ std::shared_ptr<Node> fuse_batch_dot(const std::shared_ptr<Node>& n)
     return {nullptr};
 }
 
-bool runtime::cpu::pass::CPUBatchFusion::run_on_function(std::shared_ptr<Function> func)
+bool runtime::ccpu::pass::CPUBatchFusion::run_on_function(std::shared_ptr<Function> func)
 {
     bool modified = false;
 

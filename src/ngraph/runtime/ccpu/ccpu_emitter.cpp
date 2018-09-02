@@ -123,7 +123,7 @@ using namespace ngraph;
 
 static bool s_use_ref_kernels = (std::getenv("NGRAPH_CPU_USE_REF_KERNELS") != nullptr);
 
-static string eigen_vector_format(const runtime::cpu::TensorViewWrapper& tvi)
+static string eigen_vector_format(const runtime::ccpu::TensorViewWrapper& tvi)
 {
     return "fmt::V{" + to_string(tvi.get_size()) + "}";
 }
@@ -139,7 +139,7 @@ namespace ngraph
 {
     namespace runtime
     {
-        namespace cpu
+        namespace ccpu
         {
             template <>
             void CCPUEmitter::emit<ngraph::op::Add>(CCPUExternalFunction* external_function,
@@ -152,7 +152,7 @@ namespace ngraph
                 // the right alignment instead of Eigen::Unaligned
                 writer.block_begin();
 
-                if (runtime::cpu::mkldnn_utils::use_mkldnn_kernel(node))
+                if (runtime::ccpu::mkldnn_utils::use_mkldnn_kernel(node))
                 {
                     std::vector<float> scale_vector(2, 1);
                     std::vector<mkldnn::memory::primitive_desc> inputs_pd;
@@ -162,9 +162,9 @@ namespace ngraph
                     auto input1_data_desc = mkldnn_utils::get_input_mkldnn_md(node, 1);
                     auto result_desc = mkldnn_utils::get_output_mkldnn_md(node, 0);
                     inputs_pd.push_back(mkldnn::memory::primitive_desc(
-                        input0_data_desc, runtime::cpu::mkldnn_utils::global_cpu_engine));
+                        input0_data_desc, runtime::ccpu::mkldnn_utils::global_cpu_engine));
                     inputs_pd.push_back(mkldnn::memory::primitive_desc(
-                        input1_data_desc, runtime::cpu::mkldnn_utils::global_cpu_engine));
+                        input1_data_desc, runtime::ccpu::mkldnn_utils::global_cpu_engine));
 
                     size_t add_index = 0;
                     add_index = mkldnn_emitter->build_elementwise_add(
@@ -996,7 +996,7 @@ namespace ngraph
                                                        const std::vector<TensorViewWrapper>& out)
             {
                 auto result_shape = out[0].get_shape();
-                if (runtime::cpu::mkldnn_utils::use_mkldnn_kernel(node))
+                if (runtime::ccpu::mkldnn_utils::use_mkldnn_kernel(node))
                 {
                     auto& mkldnn_emitter = external_function->get_mkldnn_emitter();
                     std::vector<mkldnn::memory::desc> inputs_data_desc;
@@ -1172,11 +1172,12 @@ namespace ngraph
                 const ngraph::op::LRN* lrn = static_cast<const ngraph::op::LRN*>(node);
 
                 writer.block_begin();
-                if (runtime::cpu::mkldnn_utils::use_mkldnn_kernel(node))
+                if (runtime::ccpu::mkldnn_utils::use_mkldnn_kernel(node))
                 {
                     auto& mkldnn_emitter = external_function->get_mkldnn_emitter();
-                    auto input_data_desc = runtime::cpu::mkldnn_utils::get_input_mkldnn_md(node, 0);
-                    auto result_desc = runtime::cpu::mkldnn_utils::get_output_mkldnn_md(node, 0);
+                    auto input_data_desc =
+                        runtime::ccpu::mkldnn_utils::get_input_mkldnn_md(node, 0);
+                    auto result_desc = runtime::ccpu::mkldnn_utils::get_output_mkldnn_md(node, 0);
 
                     auto lrn_index =
                         mkldnn_emitter->build_lrn_forward(input_data_desc,
@@ -1476,12 +1477,12 @@ namespace ngraph
                     vector<string> input_names;
                     vector<string> output_names;
 
-                    for (const runtime::cpu::TensorViewWrapper& input : args)
+                    for (const runtime::ccpu::TensorViewWrapper& input : args)
                     {
                         input_names.push_back(input.get_name());
                     }
 
-                    for (const runtime::cpu::TensorViewWrapper& output : out)
+                    for (const runtime::ccpu::TensorViewWrapper& output : out)
                     {
                         output_names.push_back(output.get_name());
                     }
@@ -2055,7 +2056,7 @@ namespace ngraph
                 const std::vector<TensorViewWrapper>& args,
                 const std::vector<TensorViewWrapper>& out)
             {
-                if (runtime::cpu::mkldnn_utils::use_mkldnn_kernel(node))
+                if (runtime::ccpu::mkldnn_utils::use_mkldnn_kernel(node))
                 {
                     auto& mkldnn_emitter = external_function->get_mkldnn_emitter();
                     auto conv_index =
@@ -2088,7 +2089,7 @@ namespace ngraph
                 auto arg1_shape = args[1].get_shape();
                 auto result_shape = out[0].get_shape();
 
-                if (runtime::cpu::mkldnn_utils::use_mkldnn_kernel(node))
+                if (runtime::ccpu::mkldnn_utils::use_mkldnn_kernel(node))
                 {
                     Strides window_dilation_strides_adjusted;
                     for (size_t s : convolution->get_window_dilation_strides())
@@ -2205,7 +2206,7 @@ namespace ngraph
                 auto arg1_shape = args[1].get_shape();
                 auto result_shape = out[0].get_shape();
 
-                if (runtime::cpu::mkldnn_utils::use_mkldnn_kernel(node))
+                if (runtime::ccpu::mkldnn_utils::use_mkldnn_kernel(node))
                 {
                     auto& mkldnn_emitter = external_function->get_mkldnn_emitter();
                     auto conv_index =
@@ -2259,7 +2260,7 @@ namespace ngraph
                 auto arg1_shape = args[1].get_shape();
                 auto result_shape = out[0].get_shape();
 
-                if (runtime::cpu::mkldnn_utils::use_mkldnn_kernel(node))
+                if (runtime::ccpu::mkldnn_utils::use_mkldnn_kernel(node))
                 {
                     auto& mkldnn_emitter = external_function->get_mkldnn_emitter();
                     auto conv_index =
@@ -2315,7 +2316,7 @@ namespace ngraph
                 auto arg1_shape = args[1].get_shape();
                 auto result_shape = out[0].get_shape();
 
-                if (runtime::cpu::mkldnn_utils::use_mkldnn_kernel(node))
+                if (runtime::ccpu::mkldnn_utils::use_mkldnn_kernel(node))
                 {
                     auto& mkldnn_emitter = external_function->get_mkldnn_emitter();
                     auto conv_index =
@@ -2366,7 +2367,7 @@ namespace ngraph
                 const std::vector<TensorViewWrapper>& args,
                 const std::vector<TensorViewWrapper>& out)
             {
-                if (runtime::cpu::mkldnn_utils::use_mkldnn_kernel(node))
+                if (runtime::ccpu::mkldnn_utils::use_mkldnn_kernel(node))
                 {
                     auto& mkldnn_emitter = external_function->get_mkldnn_emitter();
                     auto conv_index =
@@ -2400,7 +2401,7 @@ namespace ngraph
                 const std::vector<TensorViewWrapper>& args,
                 const std::vector<TensorViewWrapper>& out)
             {
-                if (runtime::cpu::mkldnn_utils::use_mkldnn_kernel(node))
+                if (runtime::ccpu::mkldnn_utils::use_mkldnn_kernel(node))
                 {
                     auto& mkldnn_emitter = external_function->get_mkldnn_emitter();
                     auto conv_index =
@@ -2484,7 +2485,7 @@ namespace ngraph
 
                 auto result_shape = out[0].get_shape();
 
-                if (runtime::cpu::mkldnn_utils::use_mkldnn_kernel(node))
+                if (runtime::ccpu::mkldnn_utils::use_mkldnn_kernel(node))
                 {
                     auto& mkldnn_emitter = external_function->get_mkldnn_emitter();
                     auto input_desc = mkldnn_utils::get_input_mkldnn_md(node, 0);
@@ -2534,7 +2535,7 @@ namespace ngraph
             {
                 auto max_pool = static_cast<const ngraph::op::MaxPoolWithIndices*>(node);
 
-                if (runtime::cpu::mkldnn_utils::use_mkldnn_kernel(node))
+                if (runtime::ccpu::mkldnn_utils::use_mkldnn_kernel(node))
                 {
                     auto& mkldnn_emitter = external_function->get_mkldnn_emitter();
                     auto input_desc = mkldnn_utils::get_input_mkldnn_md(node, 0);
@@ -2781,7 +2782,7 @@ namespace ngraph
                 auto arg_shape = args[0].get_shape();
                 auto result_shape = out[0].get_shape();
 
-                if (runtime::cpu::mkldnn_utils::use_mkldnn_kernel(node))
+                if (runtime::ccpu::mkldnn_utils::use_mkldnn_kernel(node))
                 {
                     auto& mkldnn_emitter = external_function->get_mkldnn_emitter();
                     auto input_desc = mkldnn_utils::get_input_mkldnn_md(node, 0);
@@ -2879,7 +2880,7 @@ namespace ngraph
                 auto delta_shape = args[0].get_shape();
                 auto out_shape = out[0].get_shape();
 
-                if (runtime::cpu::mkldnn_utils::use_mkldnn_kernel(node))
+                if (runtime::ccpu::mkldnn_utils::use_mkldnn_kernel(node))
                 {
                     auto& mkldnn_emitter = external_function->get_mkldnn_emitter();
                     auto diff_dst_desc = mkldnn_utils::get_input_mkldnn_md(node, 0);
@@ -2938,7 +2939,7 @@ namespace ngraph
                 auto delta_shape = args[1].get_shape();
                 auto out_shape = out[0].get_shape();
 
-                if (runtime::cpu::mkldnn_utils::use_mkldnn_kernel(node))
+                if (runtime::ccpu::mkldnn_utils::use_mkldnn_kernel(node))
                 {
                     auto& mkldnn_emitter = external_function->get_mkldnn_emitter();
                     auto fprop_src_desc = mkldnn_utils::get_input_mkldnn_md(node, 0);
@@ -3003,7 +3004,7 @@ namespace ngraph
             {
                 auto mpb = static_cast<const ngraph::op::MaxPoolWithIndicesBackprop*>(node);
 
-                if (runtime::cpu::mkldnn_utils::use_mkldnn_kernel(node))
+                if (runtime::ccpu::mkldnn_utils::use_mkldnn_kernel(node))
                 {
                     auto& mkldnn_emitter = external_function->get_mkldnn_emitter();
                     auto diff_dst_desc = mkldnn_utils::get_input_mkldnn_md(node, 1);
@@ -3109,7 +3110,7 @@ namespace ngraph
             }
 
             template <>
-            void CCPUEmitter::emit<ngraph::runtime::cpu::op::ConvertLayout>(
+            void CCPUEmitter::emit<ngraph::runtime::ccpu::op::ConvertLayout>(
                 CCPUExternalFunction* external_function,
                 codegen::CodeWriter& writer,
                 const ngraph::Node* node,
@@ -3141,7 +3142,7 @@ namespace ngraph
                 const std::vector<TensorViewWrapper>& args,
                 const std::vector<TensorViewWrapper>& out)
             {
-                if (runtime::cpu::mkldnn_utils::use_mkldnn_kernel(node))
+                if (runtime::ccpu::mkldnn_utils::use_mkldnn_kernel(node))
                 {
                     auto& mkldnn_emitter = external_function->get_mkldnn_emitter();
                     auto input_desc = mkldnn_utils::get_input_mkldnn_md(node, 0);
@@ -3180,7 +3181,7 @@ namespace ngraph
                                                      const std::vector<TensorViewWrapper>& args,
                                                      const std::vector<TensorViewWrapper>& out)
             {
-                if (runtime::cpu::mkldnn_utils::use_mkldnn_kernel(node))
+                if (runtime::ccpu::mkldnn_utils::use_mkldnn_kernel(node))
                 {
                     auto& mkldnn_emitter = external_function->get_mkldnn_emitter();
                     auto input_desc = mkldnn_utils::get_input_mkldnn_md(node, 0);
@@ -3219,7 +3220,7 @@ namespace ngraph
                 auto bounded_relu_node = static_cast<const ngraph::op::BoundedRelu*>(node);
                 float alpha = bounded_relu_node->get_alpha();
                 auto& mkldnn_emitter = external_function->get_mkldnn_emitter();
-                if (runtime::cpu::mkldnn_utils::use_mkldnn_kernel(node))
+                if (runtime::ccpu::mkldnn_utils::use_mkldnn_kernel(node))
                 {
                     auto bounded_relu_index = mkldnn_emitter->build_bounded_relu(node, args, out);
                     auto& deps = mkldnn_emitter->get_primitive_deps(bounded_relu_index);
@@ -3492,7 +3493,7 @@ namespace ngraph
                                                         const std::vector<TensorViewWrapper>& args,
                                                         const std::vector<TensorViewWrapper>& out)
             {
-                if (runtime::cpu::mkldnn_utils::use_mkldnn_kernel(node))
+                if (runtime::ccpu::mkldnn_utils::use_mkldnn_kernel(node))
                 {
                     auto softmax = static_cast<const ngraph::op::Softmax*>(node);
 
@@ -3840,7 +3841,7 @@ namespace ngraph
             }
 
             template <>
-            void CCPUEmitter::emit<ngraph::runtime::cpu::op::LoopKernel>(
+            void CCPUEmitter::emit<ngraph::runtime::ccpu::op::LoopKernel>(
                 CCPUExternalFunction* external_function,
                 codegen::CodeWriter& writer,
                 const ngraph::Node* node,
@@ -3851,8 +3852,8 @@ namespace ngraph
                     loop_symbol_table;
                 // pre-fill symbol table with inputs
 
-                const ngraph::runtime::cpu::op::LoopKernel* clk =
-                    static_cast<const ngraph::runtime::cpu::op::LoopKernel*>(node);
+                const ngraph::runtime::ccpu::op::LoopKernel* clk =
+                    static_cast<const ngraph::runtime::ccpu::op::LoopKernel*>(node);
 
                 NodeVector output_nodes = clk->get_kernel_outputs();
                 NodeVector node_list = clk->get_node_list();
@@ -3945,7 +3946,7 @@ static string format_name(const string& name)
     return rc;
 }
 
-std::string runtime::cpu::CCPUEmitter::emit_indices(const std::vector<std::string> indices)
+std::string runtime::ccpu::CCPUEmitter::emit_indices(const std::vector<std::string> indices)
 {
     stringstream ss;
     for (auto i : indices)
@@ -3956,7 +3957,7 @@ std::string runtime::cpu::CCPUEmitter::emit_indices(const std::vector<std::strin
 }
 
 std::string
-    runtime::cpu::CCPUEmitter::emit_for_lt(const std::string& prefix, size_t index, size_t to)
+    runtime::ccpu::CCPUEmitter::emit_for_lt(const std::string& prefix, size_t index, size_t to)
 {
     stringstream ss;
     auto iv = prefix + std::to_string(index);
@@ -3964,8 +3965,8 @@ std::string
     return ss.str();
 }
 
-std::string runtime::cpu::CCPUEmitter::emit_vector(const runtime::cpu::TensorViewWrapper& tvi,
-                                                   const string& name)
+std::string runtime::ccpu::CCPUEmitter::emit_vector(const runtime::ccpu::TensorViewWrapper& tvi,
+                                                    const string& name)
 {
     stringstream ss;
 
@@ -3975,8 +3976,8 @@ std::string runtime::cpu::CCPUEmitter::emit_vector(const runtime::cpu::TensorVie
     return ss.str();
 }
 
-string runtime::cpu::CCPUEmitter::emit_array1d(const runtime::cpu::TensorViewWrapper& tvi,
-                                               const string& name)
+string runtime::ccpu::CCPUEmitter::emit_array1d(const runtime::ccpu::TensorViewWrapper& tvi,
+                                                const string& name)
 {
     stringstream ss;
 
@@ -3986,8 +3987,8 @@ string runtime::cpu::CCPUEmitter::emit_array1d(const runtime::cpu::TensorViewWra
     return ss.str();
 }
 
-string runtime::cpu::CCPUEmitter::emit_matrix(const runtime::cpu::TensorViewWrapper& tvi,
-                                              const string& name)
+string runtime::ccpu::CCPUEmitter::emit_matrix(const runtime::ccpu::TensorViewWrapper& tvi,
+                                               const string& name)
 {
     stringstream ss;
 

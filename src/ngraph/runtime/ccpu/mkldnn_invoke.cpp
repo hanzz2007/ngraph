@@ -22,9 +22,9 @@
 #include "ngraph/runtime/ccpu/ccpu_runtime_context.hpp"
 #include "ngraph/runtime/ccpu/mkldnn_utils.hpp"
 
-mkldnn::engine ngraph::runtime::cpu::mkldnn_utils::global_cpu_engine(mkldnn::engine::cpu, 0);
+mkldnn::engine ngraph::runtime::ccpu::mkldnn_utils::global_cpu_engine(mkldnn::engine::cpu, 0);
 
-extern "C" void ngraph::runtime::cpu::mkldnn_utils::set_memory_ptr(CCPURuntimeContext* ctx,
+extern "C" void ngraph::runtime::ccpu::mkldnn_utils::set_memory_ptr(CCPURuntimeContext* ctx,
                                                                    size_t primitive_index,
                                                                    void* ptr)
 {
@@ -32,7 +32,7 @@ extern "C" void ngraph::runtime::cpu::mkldnn_utils::set_memory_ptr(CCPURuntimeCo
     primitive->set_data_handle(ptr);
 }
 
-extern "C" void ngraph::runtime::cpu::mkldnn_utils::mkldnn_invoke_primitive(CCPURuntimeContext* ctx,
+extern "C" void ngraph::runtime::ccpu::mkldnn_utils::mkldnn_invoke_primitive(CCPURuntimeContext* ctx,
                                                                             size_t primitive_index)
 {
     mkldnn::stream s(mkldnn::stream::kind::eager);

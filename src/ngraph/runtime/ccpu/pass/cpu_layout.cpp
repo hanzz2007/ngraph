@@ -57,13 +57,13 @@
 using namespace std;
 using namespace mkldnn;
 using namespace ngraph;
-using namespace ngraph::runtime::cpu;
+using namespace ngraph::runtime::ccpu;
 
 // Check if the input layout matches the layout requested in `required_mds`
 // If not, insert a layout conversion node between the input tensorview and
 // the `node`. For now, only MKLDNN nodes/kernels can request specific layouts
-shared_ptr<Node> runtime::cpu::pass::CPULayout::insert_input_conversions(
-    runtime::cpu::CCPUExternalFunction* external_function,
+shared_ptr<Node> runtime::ccpu::pass::CPULayout::insert_input_conversions(
+    runtime::ccpu::CCPUExternalFunction* external_function,
     shared_ptr<Node>& node,
     const vector<memory::desc>& required_mds)
 {
@@ -83,7 +83,7 @@ shared_ptr<Node> runtime::cpu::pass::CPULayout::insert_input_conversions(
         const auto& output = input.get_output();
         auto tv = output.get_tensor_view();
         auto tvl =
-            dynamic_pointer_cast<runtime::cpu::LayoutDescriptor>(tv->get_tensor_view_layout());
+            dynamic_pointer_cast<runtime::ccpu::LayoutDescriptor>(tv->get_tensor_view_layout());
 
         if (!tvl)
         {
@@ -101,10 +101,10 @@ shared_ptr<Node> runtime::cpu::pass::CPULayout::insert_input_conversions(
 
         if (!mkldnn_utils::compare_mkldnn_mds(tvl->get_mkldnn_md(), required_mds[index]))
         {
-            auto layout = std::make_shared<ngraph::runtime::cpu::LayoutDescriptor>(*tv);
+            auto layout = std::make_shared<ngraph::runtime::ccpu::LayoutDescriptor>(*tv);
             layout->set_mkldnn_md(required_mds[index]);
-            auto new_node = std::shared_ptr<Node>(
-                new runtime::cpu::op::ConvertLayout(output.get_node(), output.get_index(), layout));
+            auto new_node = std::shared_ptr<Node>(new runtime::ccpu::op::ConvertLayout(
+                output.get_node(), output.get_index(), layout));
             new_args.push_back(new_node);
             replace_node = true;
             NGRAPH_DEBUG << "Inserted conversion node " << new_node->get_name() << " between "
@@ -140,8 +140,8 @@ shared_ptr<Node> runtime::cpu::pass::CPULayout::insert_input_conversions(
     return node;
 }
 
-void runtime::cpu::pass::CPULayout::set_output_layouts(shared_ptr<Node>& node,
-                                                       const vector<memory::desc>& output_mds)
+void runtime::ccpu::pass::CPULayout::set_output_layouts(shared_ptr<Node>& node,
+                                                        const vector<memory::desc>& output_mds)
 {
     for (size_t i = 0; i < node->get_output_size(); ++i)
     {
@@ -153,7 +153,7 @@ void runtime::cpu::pass::CPULayout::set_output_layouts(shared_ptr<Node>& node,
                                ") output layout already set. This node is most likely present in "
                                "multiple graphs which could lead to unpredictable results.");
         }
-        auto layout = std::make_shared<ngraph::runtime::cpu::LayoutDescriptor>(*tv);
+        auto layout = std::make_shared<ngraph::runtime::ccpu::LayoutDescriptor>(*tv);
         layout->set_mkldnn_md(output_mds[i]);
         tv->set_tensor_view_layout(layout);
         NGRAPH_DEBUG << "Setting Node: " << node->get_name()
@@ -161,8 +161,8 @@ void runtime::cpu::pass::CPULayout::set_output_layouts(shared_ptr<Node>& node,
     }
 }
 
-void runtime::cpu::pass::CPULayout::set_native_layouts(
-    runtime::cpu::CCPUExternalFunction* external_function,
+void runtime::ccpu::pass::CPULayout::set_native_layouts(
+    runtime::ccpu::CCPUExternalFunction* external_function,
     std::shared_ptr<Node> node,
     bool use_replace = true)
 {
@@ -176,7 +176,7 @@ void runtime::cpu::pass::CPULayout::set_native_layouts(
         auto et = tv->get_element_type();
         auto shape = tv->get_shape();
         auto tvl = tv->get_tensor_view_layout();
-        auto cpu_tvl = dynamic_cast<runtime::cpu::LayoutDescriptor*>(tvl.get());
+        auto cpu_tvl = dynamic_cast<runtime::ccpu::LayoutDescriptor*>(tvl.get());
 
         if (cpu_tvl && cpu_tvl->is_mkldnn_layout())
         {
@@ -184,9 +184,9 @@ void runtime::cpu::pass::CPULayout::set_native_layouts(
                 mkldnn_utils::create_blocked_mkldnn_md(shape, cpu_tvl->get_strides(), et);
             if (!mkldnn_utils::compare_mkldnn_mds(cpu_tvl->get_mkldnn_md(), native_md))
             {
-                auto layout = std::make_shared<ngraph::runtime::cpu::LayoutDescriptor>(*tv);
+                auto layout = std::make_shared<ngraph::runtime::ccpu::LayoutDescriptor>(*tv);
                 layout->set_mkldnn_md(native_md);
-                auto new_node = std::shared_ptr<Node>(new runtime::cpu::op::ConvertLayout(
+                auto new_node = std::shared_ptr<Node>(new runtime::ccpu::op::ConvertLayout(
                     output.get_node(), output.get_index(), layout));
                 new_args.push_back(new_node);
                 if (use_replace)
@@ -244,7 +244,7 @@ void runtime::cpu::pass::CPULayout::set_native_layouts(
 
         auto shape = tv->get_shape();
         auto et = tv->get_element_type();
-        auto layout = std::make_shared<ngraph::runtime::cpu::LayoutDescriptor>(*tv);
+        auto layout = std::make_shared<ngraph::runtime::ccpu::LayoutDescriptor>(*tv);
         if (mkldnn_utils::can_create_mkldnn_md(shape, layout->get_strides(), et))
         {
             auto native_md =
@@ -259,7 +259,7 @@ namespace ngraph
 {
     namespace runtime
     {
-        namespace cpu
+        namespace ccpu
         {
             namespace pass
             {
@@ -1074,7 +1074,7 @@ namespace ngraph
                 void CPULayout::LAYOUT_DECL(ngraph::op::Result)
                 {
                     auto result = static_cast<const ngraph::op::Result*>(node.get());
-                    auto cpu_tvl = dynamic_pointer_cast<runtime::cpu::LayoutDescriptor>(
+                    auto cpu_tvl = dynamic_pointer_cast<runtime::ccpu::LayoutDescriptor>(
                         node->get_inputs()[0]
                             .get_output()
                             .get_tensor_view()
@@ -1108,7 +1108,7 @@ namespace ngraph
                                        .get_output()
                                        .get_tensor_view()
                                        ->get_tensor_view_layout();
-                        auto cpu_tvl = dynamic_cast<runtime::cpu::LayoutDescriptor*>(tvl.get());
+                        auto cpu_tvl = dynamic_cast<runtime::ccpu::LayoutDescriptor*>(tvl.get());
                         if (cpu_tvl && cpu_tvl->is_mkldnn_layout())
                         {
                             // Rotate MKLDNN memory descriptor
@@ -1124,7 +1124,7 @@ namespace ngraph
                             else
                             {
                                 op_annotations =
-                                    std::make_shared<ngraph::runtime::cpu::CCPUOpAnnotations>();
+                                    std::make_shared<ngraph::runtime::ccpu::CCPUOpAnnotations>();
                                 // pass-through
                                 op_annotations->add_in_place_oi_pair({0, 0, false});
                                 reshape->set_op_annotations(op_annotations);
@@ -1139,7 +1139,7 @@ namespace ngraph
                                 output_strides[i] = input_strides[axis_order[i]];
                             }
                             set_native_layouts(external_function, node);
-                            auto output_tvl = dynamic_pointer_cast<runtime::cpu::LayoutDescriptor>(
+                            auto output_tvl = dynamic_pointer_cast<runtime::ccpu::LayoutDescriptor>(
                                 node->get_output_tensor_view()->get_tensor_view_layout());
                             // TODO (jbobba): For now non-MKLDNN layouts are always in row-major format
                             // Enable this once we support non row-major strided formats
@@ -1159,7 +1159,7 @@ namespace ngraph
                         else
                         {
                             op_annotations =
-                                std::make_shared<ngraph::runtime::cpu::CCPUOpAnnotations>();
+                                std::make_shared<ngraph::runtime::ccpu::CCPUOpAnnotations>();
                             // pass-through
                             op_annotations->add_in_place_oi_pair({0, 0, false});
                             reshape->set_op_annotations(op_annotations);
@@ -1206,7 +1206,7 @@ namespace ngraph
                 template <>
                 void CPULayout::LAYOUT_DECL(ngraph::op::LRN)
                 {
-                    if (runtime::cpu::mkldnn_utils::use_mkldnn_kernel(node.get()))
+                    if (runtime::ccpu::mkldnn_utils::use_mkldnn_kernel(node.get()))
                     {
                         auto input_md = mkldnn_utils::get_input_mkldnn_md(node.get(), 0);
                         vector<memory::desc> o_mds;
@@ -1545,57 +1545,58 @@ namespace ngraph
 
 #define TI(x) type_index(typeid(x))
 
-static const runtime::cpu::pass::LayoutOpMap s_dispatcher{
-    {TI(ngraph::op::Add), &runtime::cpu::pass::CPULayout::layout<ngraph::op::Add>},
-    {TI(ngraph::op::Concat), &runtime::cpu::pass::CPULayout::layout<ngraph::op::Concat>},
-    {TI(ngraph::op::AvgPool), &runtime::cpu::pass::CPULayout::layout<ngraph::op::AvgPool>},
+static const runtime::ccpu::pass::LayoutOpMap s_dispatcher{
+    {TI(ngraph::op::Add), &runtime::ccpu::pass::CPULayout::layout<ngraph::op::Add>},
+    {TI(ngraph::op::Concat), &runtime::ccpu::pass::CPULayout::layout<ngraph::op::Concat>},
+    {TI(ngraph::op::AvgPool), &runtime::ccpu::pass::CPULayout::layout<ngraph::op::AvgPool>},
     {TI(ngraph::op::AvgPoolBackprop),
-     &runtime::cpu::pass::CPULayout::layout<ngraph::op::AvgPoolBackprop>},
-    {TI(ngraph::op::Convolution), &runtime::cpu::pass::CPULayout::layout<ngraph::op::Convolution>},
+     &runtime::ccpu::pass::CPULayout::layout<ngraph::op::AvgPoolBackprop>},
+    {TI(ngraph::op::Convolution), &runtime::ccpu::pass::CPULayout::layout<ngraph::op::Convolution>},
     {TI(ngraph::op::GroupConvolution),
-     &runtime::cpu::pass::CPULayout::layout<ngraph::op::GroupConvolution>},
+     &runtime::ccpu::pass::CPULayout::layout<ngraph::op::GroupConvolution>},
     {TI(ngraph::op::ConvolutionBackpropData),
-     &runtime::cpu::pass::CPULayout::layout<ngraph::op::ConvolutionBackpropData>},
+     &runtime::ccpu::pass::CPULayout::layout<ngraph::op::ConvolutionBackpropData>},
     {TI(ngraph::op::ConvolutionBackpropFilters),
-     &runtime::cpu::pass::CPULayout::layout<ngraph::op::ConvolutionBackpropFilters>},
-    {TI(ngraph::op::MaxPool), &runtime::cpu::pass::CPULayout::layout<ngraph::op::MaxPool>},
+     &runtime::ccpu::pass::CPULayout::layout<ngraph::op::ConvolutionBackpropFilters>},
+    {TI(ngraph::op::MaxPool), &runtime::ccpu::pass::CPULayout::layout<ngraph::op::MaxPool>},
     {TI(ngraph::op::MaxPoolWithIndices),
-     &runtime::cpu::pass::CPULayout::layout<ngraph::op::MaxPoolWithIndices>},
+     &runtime::ccpu::pass::CPULayout::layout<ngraph::op::MaxPoolWithIndices>},
     {TI(ngraph::op::MaxPoolBackprop),
-     &runtime::cpu::pass::CPULayout::layout<ngraph::op::MaxPoolBackprop>},
+     &runtime::ccpu::pass::CPULayout::layout<ngraph::op::MaxPoolBackprop>},
     {TI(ngraph::op::MaxPoolWithIndicesBackprop),
-     &runtime::cpu::pass::CPULayout::layout<ngraph::op::MaxPoolWithIndicesBackprop>},
+     &runtime::ccpu::pass::CPULayout::layout<ngraph::op::MaxPoolWithIndicesBackprop>},
     {TI(ngraph::op::ConvolutionBias),
-     &runtime::cpu::pass::CPULayout::layout<ngraph::op::ConvolutionBias>},
+     &runtime::ccpu::pass::CPULayout::layout<ngraph::op::ConvolutionBias>},
     {TI(ngraph::op::ConvolutionRelu),
-     &runtime::cpu::pass::CPULayout::layout<ngraph::op::ConvolutionRelu>},
+     &runtime::ccpu::pass::CPULayout::layout<ngraph::op::ConvolutionRelu>},
     {TI(ngraph::op::ConvolutionBiasAdd),
-     &runtime::cpu::pass::CPULayout::layout<ngraph::op::ConvolutionBiasAdd>},
+     &runtime::ccpu::pass::CPULayout::layout<ngraph::op::ConvolutionBiasAdd>},
     {TI(ngraph::op::ConvolutionBiasBackpropFiltersBias),
-     &runtime::cpu::pass::CPULayout::layout<ngraph::op::ConvolutionBiasBackpropFiltersBias>},
-    {TI(ngraph::op::BatchNorm), &runtime::cpu::pass::CPULayout::layout<ngraph::op::BatchNorm>},
+     &runtime::ccpu::pass::CPULayout::layout<ngraph::op::ConvolutionBiasBackpropFiltersBias>},
+    {TI(ngraph::op::BatchNorm), &runtime::ccpu::pass::CPULayout::layout<ngraph::op::BatchNorm>},
     {TI(ngraph::op::BatchNormRelu),
-     &runtime::cpu::pass::CPULayout::layout<ngraph::op::BatchNormRelu>},
+     &runtime::ccpu::pass::CPULayout::layout<ngraph::op::BatchNormRelu>},
     {TI(ngraph::op::BatchNormBackprop),
-     &runtime::cpu::pass::CPULayout::layout<ngraph::op::BatchNormBackprop>},
+     &runtime::ccpu::pass::CPULayout::layout<ngraph::op::BatchNormBackprop>},
     {TI(ngraph::op::GetOutputElement),
-     &runtime::cpu::pass::CPULayout::layout<ngraph::op::GetOutputElement>},
-    {TI(ngraph::op::LRN), &runtime::cpu::pass::CPULayout::layout<ngraph::op::LRN>},
-    {TI(ngraph::op::Relu), &runtime::cpu::pass::CPULayout::layout<ngraph::op::Relu>},
-    {TI(ngraph::op::Reshape), &runtime::cpu::pass::CPULayout::layout<ngraph::op::Reshape>},
-    {TI(ngraph::op::Result), &runtime::cpu::pass::CPULayout::layout<ngraph::op::Result>},
+     &runtime::ccpu::pass::CPULayout::layout<ngraph::op::GetOutputElement>},
+    {TI(ngraph::op::LRN), &runtime::ccpu::pass::CPULayout::layout<ngraph::op::LRN>},
+    {TI(ngraph::op::Relu), &runtime::ccpu::pass::CPULayout::layout<ngraph::op::Relu>},
+    {TI(ngraph::op::Reshape), &runtime::ccpu::pass::CPULayout::layout<ngraph::op::Reshape>},
+    {TI(ngraph::op::Result), &runtime::ccpu::pass::CPULayout::layout<ngraph::op::Result>},
     {TI(ngraph::op::ReluBackprop),
-     &runtime::cpu::pass::CPULayout::layout<ngraph::op::ReluBackprop>},
-    {TI(ngraph::op::Sigmoid), &runtime::cpu::pass::CPULayout::layout<ngraph::op::Sigmoid>},
+     &runtime::ccpu::pass::CPULayout::layout<ngraph::op::ReluBackprop>},
+    {TI(ngraph::op::Sigmoid), &runtime::ccpu::pass::CPULayout::layout<ngraph::op::Sigmoid>},
     {TI(ngraph::op::SigmoidBackprop),
-     &runtime::cpu::pass::CPULayout::layout<ngraph::op::SigmoidBackprop>},
-    {TI(ngraph::op::Lstm), &runtime::cpu::pass::CPULayout::layout<ngraph::op::Lstm>},
-    {TI(ngraph::op::Rnn), &runtime::cpu::pass::CPULayout::layout<ngraph::op::Rnn>},
-    {TI(ngraph::op::Softmax), &runtime::cpu::pass::CPULayout::layout<ngraph::op::Softmax>},
-    {TI(ngraph::op::BoundedRelu), &runtime::cpu::pass::CPULayout::layout<ngraph::op::BoundedRelu>},
+     &runtime::ccpu::pass::CPULayout::layout<ngraph::op::SigmoidBackprop>},
+    {TI(ngraph::op::Lstm), &runtime::ccpu::pass::CPULayout::layout<ngraph::op::Lstm>},
+    {TI(ngraph::op::Rnn), &runtime::ccpu::pass::CPULayout::layout<ngraph::op::Rnn>},
+    {TI(ngraph::op::Softmax), &runtime::ccpu::pass::CPULayout::layout<ngraph::op::Softmax>},
+    {TI(ngraph::op::BoundedRelu), &runtime::ccpu::pass::CPULayout::layout<ngraph::op::BoundedRelu>},
 };
 
-bool runtime::cpu::pass::CPULayout::run_on_call_graph(const std::list<std::shared_ptr<Node>>& nodes)
+bool runtime::ccpu::pass::CPULayout::run_on_call_graph(
+    const std::list<std::shared_ptr<Node>>& nodes)
 {
     for (const auto& node : nodes)
     {

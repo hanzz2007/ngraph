@@ -40,7 +40,7 @@ namespace ngraph
 {
     namespace runtime
     {
-        namespace cpu
+        namespace ccpu
         {
             class CCPUExternalFunction;
             class CCPUEmitter;
@@ -85,7 +85,7 @@ namespace ngraph
                 CCPUExternalFunction(const std::shared_ptr<ngraph::Function>& function,
                                      bool release_function = true);
                 ~CCPUExternalFunction();
-                std::shared_ptr<ngraph::runtime::cpu::CCPUCallFrame> make_call_frame();
+                std::shared_ptr<ngraph::runtime::ccpu::CCPUCallFrame> make_call_frame();
 
                 const LayoutDescriptorPtrs& get_parameter_layout_descriptors();
                 const LayoutDescriptorPtrs& get_result_layout_descriptors();

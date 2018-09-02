@@ -38,15 +38,15 @@ using namespace std;
 
 #define TI(x) std::type_index(typeid(x))
 
-void ngraph::runtime::cpu::pass::CPUPostLayoutOptimizations::construct_weight_fusion()
+void ngraph::runtime::ccpu::pass::CPUPostLayoutOptimizations::construct_weight_fusion()
 {
     auto param = std::make_shared<pattern::op::Label>(element::f32, Shape{64});
     auto reshape_conv =
         std::make_shared<ngraph::op::Reshape>(param, AxisVector{0}, Shape{16, 4, 1, 1});
     auto data_conv = std::make_shared<pattern::op::Label>(element::f32, Shape{16, 4, 7, 7});
     auto tvt = reshape_conv->get_outputs().at(0).get_tensor_view().get();
-    auto lt_desc = std::make_shared<runtime::cpu::LayoutDescriptor>(*tvt);
-    auto cvt_lt_conv = std::make_shared<runtime::cpu::op::ConvertLayout>(reshape_conv, lt_desc);
+    auto lt_desc = std::make_shared<runtime::ccpu::LayoutDescriptor>(*tvt);
+    auto cvt_lt_conv = std::make_shared<runtime::ccpu::op::ConvertLayout>(reshape_conv, lt_desc);
     auto conv = std::make_shared<ngraph::op::Convolution>(
         data_conv, cvt_lt_conv, Strides{1, 1}, Strides{1, 1});
 
@@ -60,7 +60,7 @@ void ngraph::runtime::cpu::pass::CPUPostLayoutOptimizations::construct_weight_fu
         std::shared_ptr<Node> m_conv_bprop;
 
         std::vector<std::type_index> user_pattern = {TI(ngraph::op::Reshape),
-                                                     TI(runtime::cpu::op::ConvertLayout),
+                                                     TI(runtime::ccpu::op::ConvertLayout),
                                                      TI(ngraph::op::ConvolutionBackpropData)};
 
         for (auto u : m.get_pattern_map()[param]->get_users())

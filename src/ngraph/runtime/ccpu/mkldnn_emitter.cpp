@@ -25,7 +25,7 @@
 #include "ngraph/runtime/ccpu/mkldnn_utils.hpp"
 #include "ngraph/type/element_type.hpp"
 
-using namespace ngraph::runtime::cpu;
+using namespace ngraph::runtime::ccpu;
 
 MKLDNNEmitter::~MKLDNNEmitter()
 {
@@ -952,7 +952,7 @@ size_t MKLDNNEmitter::build_concat(const std::vector<mkldnn::memory::desc>& inpu
     for (size_t i = 0; i < inputs_data_desc.size(); i++)
     {
         inputs_pd.push_back(mkldnn::memory::primitive_desc(
-            inputs_data_desc[i], runtime::cpu::mkldnn_utils::global_cpu_engine));
+            inputs_data_desc[i], runtime::ccpu::mkldnn_utils::global_cpu_engine));
     }
 
     for (size_t i = 0; i < inputs_data_desc.size(); i++)

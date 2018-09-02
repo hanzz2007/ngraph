@@ -153,7 +153,7 @@
 using namespace std;
 using namespace ngraph;
 
-runtime::cpu::CCPUExternalFunction::CCPUExternalFunction(
+runtime::ccpu::CCPUExternalFunction::CCPUExternalFunction(
     const shared_ptr<ngraph::Function>& function, bool release_function)
     : m_function(function)
     , m_release_function(release_function)
@@ -165,7 +165,7 @@ runtime::cpu::CCPUExternalFunction::CCPUExternalFunction(
 {
 }
 
-runtime::cpu::CCPUExternalFunction::~CCPUExternalFunction()
+runtime::ccpu::CCPUExternalFunction::~CCPUExternalFunction()
 {
 }
 
@@ -213,113 +213,113 @@ static StaticInitializers s_static_initializers;
 
 #define TI(x) type_index(typeid(x))
 
-static const runtime::cpu::OpMap dispatcher{
-    {TI(ngraph::op::Add), &runtime::cpu::CCPUEmitter::emit<op::Add>},
-    {TI(ngraph::op::MatmulBias), &runtime::cpu::CCPUEmitter::emit<op::MatmulBias>},
-    {TI(ngraph::op::Dot), &runtime::cpu::CCPUEmitter::emit<op::Dot>},
-    {TI(ngraph::op::Multiply), &runtime::cpu::CCPUEmitter::emit<op::Multiply>},
-    {TI(ngraph::op::Parameter), &runtime::cpu::CCPUEmitter::nop},
-    {TI(ngraph::op::Abs), &runtime::cpu::CCPUEmitter::emit<op::Abs>},
-    {TI(ngraph::op::BatchDot), &runtime::cpu::CCPUEmitter::emit<op::BatchDot>},
-    {TI(ngraph::op::Concat), &runtime::cpu::CCPUEmitter::emit<op::Concat>},
-    {TI(ngraph::op::Divide), &runtime::cpu::CCPUEmitter::emit<op::Divide>},
-    {TI(ngraph::op::Equal), &runtime::cpu::CCPUEmitter::emit<op::Equal>},
-    {TI(ngraph::op::GetOutputElement), &runtime::cpu::CCPUEmitter::emit<op::GetOutputElement>},
-    {TI(ngraph::op::Greater), &runtime::cpu::CCPUEmitter::emit<op::Greater>},
-    {TI(ngraph::op::GreaterEq), &runtime::cpu::CCPUEmitter::emit<op::GreaterEq>},
-    {TI(ngraph::op::Less), &runtime::cpu::CCPUEmitter::emit<op::Less>},
-    {TI(ngraph::op::LessEq), &runtime::cpu::CCPUEmitter::emit<op::LessEq>},
-    {TI(ngraph::op::Log), &runtime::cpu::CCPUEmitter::emit<op::Log>},
-    {TI(ngraph::op::Maximum), &runtime::cpu::CCPUEmitter::emit<op::Maximum>},
-    {TI(ngraph::op::Minimum), &runtime::cpu::CCPUEmitter::emit<op::Minimum>},
-    {TI(ngraph::op::Negative), &runtime::cpu::CCPUEmitter::emit<op::Negative>},
-    {TI(ngraph::op::NotEqual), &runtime::cpu::CCPUEmitter::emit<op::NotEqual>},
-    {TI(ngraph::op::Power), &runtime::cpu::CCPUEmitter::emit<op::Power>},
-    {TI(ngraph::op::Select), &runtime::cpu::CCPUEmitter::emit<op::Select>},
-    {TI(ngraph::op::Subtract), &runtime::cpu::CCPUEmitter::emit<op::Subtract>},
-    {TI(ngraph::op::Broadcast), &runtime::cpu::CCPUEmitter::emit<op::Broadcast>},
-    {TI(ngraph::op::Convert), &runtime::cpu::CCPUEmitter::emit<op::Convert>},
-    {TI(ngraph::op::Constant), &runtime::cpu::CCPUEmitter::emit<op::Constant>},
-    {TI(ngraph::op::Reshape), &runtime::cpu::CCPUEmitter::emit<op::Reshape>},
-    {TI(ngraph::op::FunctionCall), &runtime::cpu::CCPUEmitter::emit<op::FunctionCall>},
-    {TI(ngraph::op::Reduce), &runtime::cpu::CCPUEmitter::emit<op::Reduce>},
-    {TI(ngraph::op::Sign), &runtime::cpu::CCPUEmitter::emit<op::Sign>},
-    {TI(ngraph::op::Slice), &runtime::cpu::CCPUEmitter::emit<op::Slice>},
-    {TI(ngraph::op::Sum), &runtime::cpu::CCPUEmitter::emit<op::Sum>},
-    {TI(ngraph::op::Exp), &runtime::cpu::CCPUEmitter::emit<op::Exp>},
-    {TI(ngraph::op::Sin), &runtime::cpu::CCPUEmitter::emit<op::Sin>},
-    {TI(ngraph::op::Sinh), &runtime::cpu::CCPUEmitter::emit<op::Sinh>},
-    {TI(ngraph::op::Cos), &runtime::cpu::CCPUEmitter::emit<op::Cos>},
-    {TI(ngraph::op::Cosh), &runtime::cpu::CCPUEmitter::emit<op::Cosh>},
-    {TI(ngraph::op::Tan), &runtime::cpu::CCPUEmitter::emit<op::Tan>},
-    {TI(ngraph::op::Tanh), &runtime::cpu::CCPUEmitter::emit<op::Tanh>},
-    {TI(ngraph::op::Asin), &runtime::cpu::CCPUEmitter::emit<op::Asin>},
-    {TI(ngraph::op::ArgMin), &runtime::cpu::CCPUEmitter::emit<op::ArgMin>},
-    {TI(ngraph::op::ArgMax), &runtime::cpu::CCPUEmitter::emit<op::ArgMax>},
-    {TI(ngraph::op::Acos), &runtime::cpu::CCPUEmitter::emit<op::Acos>},
-    {TI(ngraph::op::Atan), &runtime::cpu::CCPUEmitter::emit<op::Atan>},
-    {TI(ngraph::op::ReplaceSlice), &runtime::cpu::CCPUEmitter::emit<op::ReplaceSlice>},
-    {TI(ngraph::op::OneHot), &runtime::cpu::CCPUEmitter::emit<op::OneHot>},
-    {TI(ngraph::op::Floor), &runtime::cpu::CCPUEmitter::emit<op::Floor>},
-    {TI(ngraph::op::Ceiling), &runtime::cpu::CCPUEmitter::emit<op::Ceiling>},
-    {TI(ngraph::op::Sqrt), &runtime::cpu::CCPUEmitter::emit<op::Sqrt>},
-    {TI(ngraph::op::Convolution), &runtime::cpu::CCPUEmitter::emit<op::Convolution>},
+static const runtime::ccpu::OpMap dispatcher{
+    {TI(ngraph::op::Add), &runtime::ccpu::CCPUEmitter::emit<op::Add>},
+    {TI(ngraph::op::MatmulBias), &runtime::ccpu::CCPUEmitter::emit<op::MatmulBias>},
+    {TI(ngraph::op::Dot), &runtime::ccpu::CCPUEmitter::emit<op::Dot>},
+    {TI(ngraph::op::Multiply), &runtime::ccpu::CCPUEmitter::emit<op::Multiply>},
+    {TI(ngraph::op::Parameter), &runtime::ccpu::CCPUEmitter::nop},
+    {TI(ngraph::op::Abs), &runtime::ccpu::CCPUEmitter::emit<op::Abs>},
+    {TI(ngraph::op::BatchDot), &runtime::ccpu::CCPUEmitter::emit<op::BatchDot>},
+    {TI(ngraph::op::Concat), &runtime::ccpu::CCPUEmitter::emit<op::Concat>},
+    {TI(ngraph::op::Divide), &runtime::ccpu::CCPUEmitter::emit<op::Divide>},
+    {TI(ngraph::op::Equal), &runtime::ccpu::CCPUEmitter::emit<op::Equal>},
+    {TI(ngraph::op::GetOutputElement), &runtime::ccpu::CCPUEmitter::emit<op::GetOutputElement>},
+    {TI(ngraph::op::Greater), &runtime::ccpu::CCPUEmitter::emit<op::Greater>},
+    {TI(ngraph::op::GreaterEq), &runtime::ccpu::CCPUEmitter::emit<op::GreaterEq>},
+    {TI(ngraph::op::Less), &runtime::ccpu::CCPUEmitter::emit<op::Less>},
+    {TI(ngraph::op::LessEq), &runtime::ccpu::CCPUEmitter::emit<op::LessEq>},
+    {TI(ngraph::op::Log), &runtime::ccpu::CCPUEmitter::emit<op::Log>},
+    {TI(ngraph::op::Maximum), &runtime::ccpu::CCPUEmitter::emit<op::Maximum>},
+    {TI(ngraph::op::Minimum), &runtime::ccpu::CCPUEmitter::emit<op::Minimum>},
+    {TI(ngraph::op::Negative), &runtime::ccpu::CCPUEmitter::emit<op::Negative>},
+    {TI(ngraph::op::NotEqual), &runtime::ccpu::CCPUEmitter::emit<op::NotEqual>},
+    {TI(ngraph::op::Power), &runtime::ccpu::CCPUEmitter::emit<op::Power>},
+    {TI(ngraph::op::Select), &runtime::ccpu::CCPUEmitter::emit<op::Select>},
+    {TI(ngraph::op::Subtract), &runtime::ccpu::CCPUEmitter::emit<op::Subtract>},
+    {TI(ngraph::op::Broadcast), &runtime::ccpu::CCPUEmitter::emit<op::Broadcast>},
+    {TI(ngraph::op::Convert), &runtime::ccpu::CCPUEmitter::emit<op::Convert>},
+    {TI(ngraph::op::Constant), &runtime::ccpu::CCPUEmitter::emit<op::Constant>},
+    {TI(ngraph::op::Reshape), &runtime::ccpu::CCPUEmitter::emit<op::Reshape>},
+    {TI(ngraph::op::FunctionCall), &runtime::ccpu::CCPUEmitter::emit<op::FunctionCall>},
+    {TI(ngraph::op::Reduce), &runtime::ccpu::CCPUEmitter::emit<op::Reduce>},
+    {TI(ngraph::op::Sign), &runtime::ccpu::CCPUEmitter::emit<op::Sign>},
+    {TI(ngraph::op::Slice), &runtime::ccpu::CCPUEmitter::emit<op::Slice>},
+    {TI(ngraph::op::Sum), &runtime::ccpu::CCPUEmitter::emit<op::Sum>},
+    {TI(ngraph::op::Exp), &runtime::ccpu::CCPUEmitter::emit<op::Exp>},
+    {TI(ngraph::op::Sin), &runtime::ccpu::CCPUEmitter::emit<op::Sin>},
+    {TI(ngraph::op::Sinh), &runtime::ccpu::CCPUEmitter::emit<op::Sinh>},
+    {TI(ngraph::op::Cos), &runtime::ccpu::CCPUEmitter::emit<op::Cos>},
+    {TI(ngraph::op::Cosh), &runtime::ccpu::CCPUEmitter::emit<op::Cosh>},
+    {TI(ngraph::op::Tan), &runtime::ccpu::CCPUEmitter::emit<op::Tan>},
+    {TI(ngraph::op::Tanh), &runtime::ccpu::CCPUEmitter::emit<op::Tanh>},
+    {TI(ngraph::op::Asin), &runtime::ccpu::CCPUEmitter::emit<op::Asin>},
+    {TI(ngraph::op::ArgMin), &runtime::ccpu::CCPUEmitter::emit<op::ArgMin>},
+    {TI(ngraph::op::ArgMax), &runtime::ccpu::CCPUEmitter::emit<op::ArgMax>},
+    {TI(ngraph::op::Acos), &runtime::ccpu::CCPUEmitter::emit<op::Acos>},
+    {TI(ngraph::op::Atan), &runtime::ccpu::CCPUEmitter::emit<op::Atan>},
+    {TI(ngraph::op::ReplaceSlice), &runtime::ccpu::CCPUEmitter::emit<op::ReplaceSlice>},
+    {TI(ngraph::op::OneHot), &runtime::ccpu::CCPUEmitter::emit<op::OneHot>},
+    {TI(ngraph::op::Floor), &runtime::ccpu::CCPUEmitter::emit<op::Floor>},
+    {TI(ngraph::op::Ceiling), &runtime::ccpu::CCPUEmitter::emit<op::Ceiling>},
+    {TI(ngraph::op::Sqrt), &runtime::ccpu::CCPUEmitter::emit<op::Sqrt>},
+    {TI(ngraph::op::Convolution), &runtime::ccpu::CCPUEmitter::emit<op::Convolution>},
     {TI(ngraph::op::ConvolutionBackpropFilters),
-     &runtime::cpu::CCPUEmitter::emit<op::ConvolutionBackpropFilters>},
+     &runtime::ccpu::CCPUEmitter::emit<op::ConvolutionBackpropFilters>},
     {TI(ngraph::op::ConvolutionBackpropData),
-     &runtime::cpu::CCPUEmitter::emit<op::ConvolutionBackpropData>},
-    {TI(ngraph::op::GroupConvolution), &runtime::cpu::CCPUEmitter::emit<op::GroupConvolution>},
-    {TI(ngraph::op::ConvolutionBias), &runtime::cpu::CCPUEmitter::emit<op::ConvolutionBias>},
-    {TI(ngraph::op::ConvolutionRelu), &runtime::cpu::CCPUEmitter::emit<op::ConvolutionRelu>},
-    {TI(ngraph::op::ConvolutionBiasAdd), &runtime::cpu::CCPUEmitter::emit<op::ConvolutionBiasAdd>},
+     &runtime::ccpu::CCPUEmitter::emit<op::ConvolutionBackpropData>},
+    {TI(ngraph::op::GroupConvolution), &runtime::ccpu::CCPUEmitter::emit<op::GroupConvolution>},
+    {TI(ngraph::op::ConvolutionBias), &runtime::ccpu::CCPUEmitter::emit<op::ConvolutionBias>},
+    {TI(ngraph::op::ConvolutionRelu), &runtime::ccpu::CCPUEmitter::emit<op::ConvolutionRelu>},
+    {TI(ngraph::op::ConvolutionBiasAdd), &runtime::ccpu::CCPUEmitter::emit<op::ConvolutionBiasAdd>},
     // conv+bias backprop for data share the same implementation as ConvolutionBackpropData
     {TI(ngraph::op::ConvolutionBiasBackpropFiltersBias),
-     &runtime::cpu::CCPUEmitter::emit<op::ConvolutionBiasBackpropFiltersBias>},
-    {TI(ngraph::runtime::cpu::op::ConvertLayout),
-     &runtime::cpu::CCPUEmitter::emit<runtime::cpu::op::ConvertLayout>},
-    {TI(ngraph::op::Not), &runtime::cpu::CCPUEmitter::emit<op::Not>},
-    {TI(ngraph::op::MaxPool), &runtime::cpu::CCPUEmitter::emit<op::MaxPool>},
-    {TI(ngraph::op::MaxPoolWithIndices), &runtime::cpu::CCPUEmitter::emit<op::MaxPoolWithIndices>},
-    {TI(ngraph::op::Reverse), &runtime::cpu::CCPUEmitter::emit<op::Reverse>},
-    {TI(ngraph::op::ReverseSequence), &runtime::cpu::CCPUEmitter::emit<op::ReverseSequence>},
-    {TI(ngraph::op::Result), &runtime::cpu::CCPUEmitter::emit<op::Result>},
-    {TI(ngraph::op::ReduceWindow), &runtime::cpu::CCPUEmitter::emit<op::ReduceWindow>},
-    {TI(ngraph::op::SelectAndScatter), &runtime::cpu::CCPUEmitter::emit<op::SelectAndScatter>},
-    {TI(ngraph::op::AvgPool), &runtime::cpu::CCPUEmitter::emit<op::AvgPool>},
-    {TI(ngraph::op::AvgPoolBackprop), &runtime::cpu::CCPUEmitter::emit<op::AvgPoolBackprop>},
-    {TI(ngraph::op::Pad), &runtime::cpu::CCPUEmitter::emit<op::Pad>},
-    {TI(ngraph::op::BatchNorm), &runtime::cpu::CCPUEmitter::emit<op::BatchNorm>},
-    {TI(ngraph::op::BatchNormRelu), &runtime::cpu::CCPUEmitter::emit<op::BatchNormRelu>},
-    {TI(ngraph::op::BatchNormBackprop), &runtime::cpu::CCPUEmitter::emit<op::BatchNormBackprop>},
-    {TI(ngraph::op::BoundedRelu), &runtime::cpu::CCPUEmitter::emit<op::BoundedRelu>},
-    {TI(ngraph::op::Lstm), &runtime::cpu::CCPUEmitter::emit<op::Lstm>},
-    {TI(ngraph::op::MaxPoolBackprop), &runtime::cpu::CCPUEmitter::emit<op::MaxPoolBackprop>},
+     &runtime::ccpu::CCPUEmitter::emit<op::ConvolutionBiasBackpropFiltersBias>},
+    {TI(ngraph::runtime::ccpu::op::ConvertLayout),
+     &runtime::ccpu::CCPUEmitter::emit<runtime::ccpu::op::ConvertLayout>},
+    {TI(ngraph::op::Not), &runtime::ccpu::CCPUEmitter::emit<op::Not>},
+    {TI(ngraph::op::MaxPool), &runtime::ccpu::CCPUEmitter::emit<op::MaxPool>},
+    {TI(ngraph::op::MaxPoolWithIndices), &runtime::ccpu::CCPUEmitter::emit<op::MaxPoolWithIndices>},
+    {TI(ngraph::op::Reverse), &runtime::ccpu::CCPUEmitter::emit<op::Reverse>},
+    {TI(ngraph::op::ReverseSequence), &runtime::ccpu::CCPUEmitter::emit<op::ReverseSequence>},
+    {TI(ngraph::op::Result), &runtime::ccpu::CCPUEmitter::emit<op::Result>},
+    {TI(ngraph::op::ReduceWindow), &runtime::ccpu::CCPUEmitter::emit<op::ReduceWindow>},
+    {TI(ngraph::op::SelectAndScatter), &runtime::ccpu::CCPUEmitter::emit<op::SelectAndScatter>},
+    {TI(ngraph::op::AvgPool), &runtime::ccpu::CCPUEmitter::emit<op::AvgPool>},
+    {TI(ngraph::op::AvgPoolBackprop), &runtime::ccpu::CCPUEmitter::emit<op::AvgPoolBackprop>},
+    {TI(ngraph::op::Pad), &runtime::ccpu::CCPUEmitter::emit<op::Pad>},
+    {TI(ngraph::op::BatchNorm), &runtime::ccpu::CCPUEmitter::emit<op::BatchNorm>},
+    {TI(ngraph::op::BatchNormRelu), &runtime::ccpu::CCPUEmitter::emit<op::BatchNormRelu>},
+    {TI(ngraph::op::BatchNormBackprop), &runtime::ccpu::CCPUEmitter::emit<op::BatchNormBackprop>},
+    {TI(ngraph::op::BoundedRelu), &runtime::ccpu::CCPUEmitter::emit<op::BoundedRelu>},
+    {TI(ngraph::op::Lstm), &runtime::ccpu::CCPUEmitter::emit<op::Lstm>},
+    {TI(ngraph::op::MaxPoolBackprop), &runtime::ccpu::CCPUEmitter::emit<op::MaxPoolBackprop>},
     {TI(ngraph::op::MaxPoolWithIndicesBackprop),
-     &runtime::cpu::CCPUEmitter::emit<op::MaxPoolWithIndicesBackprop>},
-    {TI(ngraph::op::Product), &runtime::cpu::CCPUEmitter::emit<op::Product>},
-    {TI(ngraph::op::Max), &runtime::cpu::CCPUEmitter::emit<op::Max>},
-    {TI(ngraph::op::Min), &runtime::cpu::CCPUEmitter::emit<op::Min>},
-    {TI(ngraph::op::Relu), &runtime::cpu::CCPUEmitter::emit<op::Relu>},
-    {TI(ngraph::op::ReluBackprop), &runtime::cpu::CCPUEmitter::emit<op::ReluBackprop>},
-    {TI(ngraph::op::Rnn), &runtime::cpu::CCPUEmitter::emit<op::Rnn>},
-    {TI(ngraph::op::Sigmoid), &runtime::cpu::CCPUEmitter::emit<op::Sigmoid>},
-    {TI(ngraph::op::SigmoidMultiply), &runtime::cpu::CCPUEmitter::emit<op::SigmoidMultiply>},
+     &runtime::ccpu::CCPUEmitter::emit<op::MaxPoolWithIndicesBackprop>},
+    {TI(ngraph::op::Product), &runtime::ccpu::CCPUEmitter::emit<op::Product>},
+    {TI(ngraph::op::Max), &runtime::ccpu::CCPUEmitter::emit<op::Max>},
+    {TI(ngraph::op::Min), &runtime::ccpu::CCPUEmitter::emit<op::Min>},
+    {TI(ngraph::op::Relu), &runtime::ccpu::CCPUEmitter::emit<op::Relu>},
+    {TI(ngraph::op::ReluBackprop), &runtime::ccpu::CCPUEmitter::emit<op::ReluBackprop>},
+    {TI(ngraph::op::Rnn), &runtime::ccpu::CCPUEmitter::emit<op::Rnn>},
+    {TI(ngraph::op::Sigmoid), &runtime::ccpu::CCPUEmitter::emit<op::Sigmoid>},
+    {TI(ngraph::op::SigmoidMultiply), &runtime::ccpu::CCPUEmitter::emit<op::SigmoidMultiply>},
     {TI(ngraph::op::SigmoidMultiplyBackprop),
-     &runtime::cpu::CCPUEmitter::emit<op::SigmoidMultiplyBackprop>},
-    {TI(ngraph::op::Softmax), &runtime::cpu::CCPUEmitter::emit<op::Softmax>},
-    {TI(ngraph::op::SigmoidBackprop), &runtime::cpu::CCPUEmitter::emit<op::SigmoidBackprop>},
-    {TI(ngraph::op::And), &runtime::cpu::CCPUEmitter::emit<op::And>},
-    {TI(ngraph::op::Or), &runtime::cpu::CCPUEmitter::emit<op::Or>},
-    {TI(ngraph::runtime::cpu::op::LoopKernel),
-     &runtime::cpu::CCPUEmitter::emit<runtime::cpu::op::LoopKernel>},
-    {TI(ngraph::op::LRN), &runtime::cpu::CCPUEmitter::emit<ngraph::op::LRN>},
-    {TI(ngraph::op::Custom), &runtime::cpu::CCPUEmitter::emit<ngraph::op::Custom>},
+     &runtime::ccpu::CCPUEmitter::emit<op::SigmoidMultiplyBackprop>},
+    {TI(ngraph::op::Softmax), &runtime::ccpu::CCPUEmitter::emit<op::Softmax>},
+    {TI(ngraph::op::SigmoidBackprop), &runtime::ccpu::CCPUEmitter::emit<op::SigmoidBackprop>},
+    {TI(ngraph::op::And), &runtime::ccpu::CCPUEmitter::emit<op::And>},
+    {TI(ngraph::op::Or), &runtime::ccpu::CCPUEmitter::emit<op::Or>},
+    {TI(ngraph::runtime::ccpu::op::LoopKernel),
+     &runtime::ccpu::CCPUEmitter::emit<runtime::ccpu::op::LoopKernel>},
+    {TI(ngraph::op::LRN), &runtime::ccpu::CCPUEmitter::emit<ngraph::op::LRN>},
+    {TI(ngraph::op::Custom), &runtime::ccpu::CCPUEmitter::emit<ngraph::op::Custom>},
 };
 
 static void
     generate_isnan_isinf_check(codegen::CodeWriter& writer,
                                std::shared_ptr<Node> node,
-                               const std::vector<ngraph::runtime::cpu::TensorViewWrapper>& out,
+                               const std::vector<ngraph::runtime::ccpu::TensorViewWrapper>& out,
                                const char* funcname)
 {
     auto ctype = node->get_element_type().c_type_string();
@@ -331,7 +331,7 @@ static void
     writer << "}\n";
 }
 
-void runtime::cpu::CCPUExternalFunction::compile()
+void runtime::ccpu::CCPUExternalFunction::compile()
 {
     if (m_is_compiled)
     {
@@ -348,25 +348,25 @@ void runtime::cpu::CCPUExternalFunction::compile()
     pass_manager.register_pass<ngraph::pass::NopElimination>();
     // TODO (pruthvi): Enable all the disabeled RNN fusion graph pass after fixing
     // failing mxnet unit tests.
-    // pass_manager.register_pass<runtime::cpu::pass::LSTMFusion>();
-    // pass_manager.register_pass<runtime::cpu::pass::RNNFusion>();
+    // pass_manager.register_pass<runtime::ccpu::pass::LSTMFusion>();
+    // pass_manager.register_pass<runtime::ccpu::pass::RNNFusion>();
     pass_manager.register_pass<ngraph::pass::AlgebraicSimplification>();
-    // pass_manager.register_pass<runtime::cpu::pass::MultiLayerRNNFusion>();
-    // pass_manager.register_pass<runtime::cpu::pass::ConcatInputs>();
-    pass_manager.register_pass<runtime::cpu::pass::CPUBatchFusion>();
+    // pass_manager.register_pass<runtime::ccpu::pass::MultiLayerRNNFusion>();
+    // pass_manager.register_pass<runtime::ccpu::pass::ConcatInputs>();
+    pass_manager.register_pass<runtime::ccpu::pass::CPUBatchFusion>();
     pass_manager.register_pass<ngraph::pass::CommonSubexpressionElimination>();
     pass_manager.register_pass<ngraph::pass::CoreFusion>();
-    pass_manager.register_pass<runtime::cpu::pass::CPUFusion>();
-    pass_manager.register_pass<runtime::cpu::pass::CPUCollapseDims>();
-    pass_manager.register_pass<runtime::cpu::pass::CPUWorkspaceInsertion>(nv_cwi);
-    pass_manager.register_pass<runtime::cpu::pass::CPUAssignment>(this);
-    pass_manager.register_pass<runtime::cpu::pass::CPULayout>(this);
-    pass_manager.register_pass<runtime::cpu::pass::CPUPostLayoutOptimizations>();
+    pass_manager.register_pass<runtime::ccpu::pass::CPUFusion>();
+    pass_manager.register_pass<runtime::ccpu::pass::CPUCollapseDims>();
+    pass_manager.register_pass<runtime::ccpu::pass::CPUWorkspaceInsertion>(nv_cwi);
+    pass_manager.register_pass<runtime::ccpu::pass::CPUAssignment>(this);
+    pass_manager.register_pass<runtime::ccpu::pass::CPULayout>(this);
+    pass_manager.register_pass<runtime::ccpu::pass::CPUPostLayoutOptimizations>();
     pass_manager.register_pass<ngraph::pass::ResultCopyElimination>();
     pass_manager.register_pass<ngraph::pass::GetOutputElementElimination>();
     unordered_map<Node*, Node*> node_function_map;
     string common_function_string;
-    auto femitter = bind(&ngraph::runtime::cpu::CCPUExternalFunction::emit_op_as_function,
+    auto femitter = bind(&ngraph::runtime::ccpu::CCPUExternalFunction::emit_op_as_function,
                          this,
                          placeholders::_1,
                          placeholders::_2);
@@ -425,7 +425,7 @@ void runtime::cpu::CCPUExternalFunction::compile()
 #include "ngraph/strides.hpp"
 #include "ngraph/util.hpp"
 
-using namespace ngraph::runtime::cpu::eigen;
+using namespace ngraph::runtime::ccpu::eigen;
 using namespace ngraph::runtime;
 
 )";
@@ -516,7 +516,7 @@ using namespace ngraph::runtime;
     for (shared_ptr<Function> f : pass_manager.get_state().get_functions())
     {
         writer << "extern \"C\" void " << f->get_name()
-               << "(void** inputs, void** outputs, cpu::CCPURuntimeContext* ctx);\n";
+               << "(void** inputs, void** outputs, ccpu::CCPURuntimeContext* ctx);\n";
     }
     writer << "\n";
 
@@ -579,7 +579,7 @@ using namespace ngraph::runtime;
         writer << "bool " << current_function->get_name() << "_t_en[" << tensor_index << "];\n";
 
         writer << "extern \"C\" void " << current_function->get_name();
-        writer << "(void** inputs, void** outputs, cpu::CCPURuntimeContext* ctx)\n";
+        writer << "(void** inputs, void** outputs, ccpu::CCPURuntimeContext* ctx)\n";
         writer << "{\n";
         writer.indent++;
 
@@ -792,7 +792,7 @@ using namespace ngraph::runtime;
                                    tv->get_name());
             }
             parameter_layout_descriptors.emplace_back(
-                static_pointer_cast<runtime::cpu::LayoutDescriptor>(tv->get_tensor_view_layout()));
+                static_pointer_cast<runtime::ccpu::LayoutDescriptor>(tv->get_tensor_view_layout()));
         }
     }
 
@@ -812,7 +812,7 @@ using namespace ngraph::runtime;
                 throw ngraph_error("layout missing on function output tensor: " + tv->get_name());
             }
             result_layout_descriptors.emplace_back(
-                static_pointer_cast<runtime::cpu::LayoutDescriptor>(tv->get_tensor_view_layout()));
+                static_pointer_cast<runtime::ccpu::LayoutDescriptor>(tv->get_tensor_view_layout()));
         }
     }
 
@@ -823,7 +823,7 @@ using namespace ngraph::runtime;
     }
 }
 
-bool runtime::cpu::CCPUExternalFunction::computes_result(Node* node)
+bool runtime::ccpu::CCPUExternalFunction::computes_result(Node* node)
 {
     for (size_t i = 0; i < node->get_output_size(); i++)
     {
@@ -836,7 +836,7 @@ bool runtime::cpu::CCPUExternalFunction::computes_result(Node* node)
     return false;
 }
 
-void runtime::cpu::CCPUExternalFunction::propagate_in_place_input(
+void runtime::ccpu::CCPUExternalFunction::propagate_in_place_input(
     ngraph::descriptor::Output* output, std::string input_name, bool dex)
 {
     std::deque<ngraph::descriptor::Output*> stack;
@@ -883,7 +883,7 @@ void runtime::cpu::CCPUExternalFunction::propagate_in_place_input(
     }
 }
 
-void runtime::cpu::CCPUExternalFunction::propagate_in_place_output(
+void runtime::ccpu::CCPUExternalFunction::propagate_in_place_output(
     ngraph::descriptor::Output* res_src_output, std::string output_name, bool dex)
 {
     // we start with a particular output
@@ -934,7 +934,7 @@ void runtime::cpu::CCPUExternalFunction::propagate_in_place_output(
     } while (propagate_further);
 }
 
-void*& runtime::cpu::CCPUExternalFunction::get_tensor_data(const std::string& name)
+void*& runtime::ccpu::CCPUExternalFunction::get_tensor_data(const std::string& name)
 {
     if (tensor_alias.count(name))
     {
@@ -946,31 +946,31 @@ void*& runtime::cpu::CCPUExternalFunction::get_tensor_data(const std::string& na
     }
 }
 
-shared_ptr<ngraph::runtime::cpu::CCPUCallFrame>
-    runtime::cpu::CCPUExternalFunction::make_call_frame()
+shared_ptr<ngraph::runtime::ccpu::CCPUCallFrame>
+    runtime::ccpu::CCPUExternalFunction::make_call_frame()
 {
     if (!m_is_compiled)
     {
         compile();
     }
 
-    return make_shared<ngraph::runtime::cpu::CCPUCallFrame>(shared_from_this(),
-                                                            m_compiled_function);
+    return make_shared<ngraph::runtime::ccpu::CCPUCallFrame>(shared_from_this(),
+                                                             m_compiled_function);
 }
 
-const runtime::cpu::LayoutDescriptorPtrs&
-    runtime::cpu::CCPUExternalFunction::get_parameter_layout_descriptors()
+const runtime::ccpu::LayoutDescriptorPtrs&
+    runtime::ccpu::CCPUExternalFunction::get_parameter_layout_descriptors()
 {
     return parameter_layout_descriptors;
 }
 
-const runtime::cpu::LayoutDescriptorPtrs&
-    runtime::cpu::CCPUExternalFunction::get_result_layout_descriptors()
+const runtime::ccpu::LayoutDescriptorPtrs&
+    runtime::ccpu::CCPUExternalFunction::get_result_layout_descriptors()
 {
     return result_layout_descriptors;
 }
 
-void runtime::cpu::CCPUExternalFunction::emit_debug_function_entry(
+void runtime::ccpu::CCPUExternalFunction::emit_debug_function_entry(
     codegen::CodeWriter& writer,
     Node* node,
     const std::vector<TensorViewWrapper>& in,
@@ -982,7 +982,7 @@ void runtime::cpu::CCPUExternalFunction::emit_debug_function_entry(
     }
 }
 
-void runtime::cpu::CCPUExternalFunction::emit_debug_function_exit(
+void runtime::ccpu::CCPUExternalFunction::emit_debug_function_exit(
     codegen::CodeWriter& writer,
     Node* node,
     const std::vector<TensorViewWrapper>& in,
@@ -994,13 +994,13 @@ void runtime::cpu::CCPUExternalFunction::emit_debug_function_exit(
     }
 }
 
-bool runtime::cpu::CCPUExternalFunction::is_functionally_identical(
+bool runtime::ccpu::CCPUExternalFunction::is_functionally_identical(
     const Node& n1, const Node& n2, const unordered_map<const Node*, string>& node_cache)
 {
     return node_cache.at(&n1) == node_cache.at(&n2);
 }
 
-runtime::cpu::OpFunction runtime::cpu::CCPUExternalFunction::dispatcher_lookup(const Node& node)
+runtime::ccpu::OpFunction runtime::ccpu::CCPUExternalFunction::dispatcher_lookup(const Node& node)
 {
     auto handler = dispatcher.find(type_index(typeid(node)));
     if (handler == dispatcher.end())
@@ -1017,8 +1017,8 @@ runtime::cpu::OpFunction runtime::cpu::CCPUExternalFunction::dispatcher_lookup(c
     return handler->second;
 }
 
-string runtime::cpu::CCPUExternalFunction::emit_op_as_function(const Node& node,
-                                                               const string& function_name)
+string runtime::ccpu::CCPUExternalFunction::emit_op_as_function(const Node& node,
+                                                                const string& function_name)
 {
     codegen::CodeWriter writer;
     writer << "static void " << function_name << "(";
@@ -1076,7 +1076,7 @@ string runtime::cpu::CCPUExternalFunction::emit_op_as_function(const Node& node,
     return rc;
 }
 
-string runtime::cpu::CCPUExternalFunction::strip_comments(const string& s)
+string runtime::ccpu::CCPUExternalFunction::strip_comments(const string& s)
 {
     stringstream out;
     for (size_t i = 0; i < s.size(); i++)

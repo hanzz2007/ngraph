@@ -88,15 +88,15 @@ public:
         prune_graphs(min_nodes_to_fuse);
     }
 
-    const std::vector<std::shared_ptr<runtime::cpu::op::LoopKernel>> get_loop_kernels() const
+    const std::vector<std::shared_ptr<runtime::ccpu::op::LoopKernel>> get_loop_kernels() const
     {
-        std::vector<std::shared_ptr<runtime::cpu::op::LoopKernel>> lks;
+        std::vector<std::shared_ptr<runtime::ccpu::op::LoopKernel>> lks;
         for (auto e : m_graphs)
         {
             auto& lkg = e.second;
 
             NodeVector member_outputs = ngraph::get_subgraph_outputs(lkg.m_nodes, NodeVector{});
-            auto lk = std::make_shared<runtime::cpu::op::LoopKernel>(
+            auto lk = std::make_shared<runtime::ccpu::op::LoopKernel>(
                 lkg.m_nodes, member_outputs, lkg.m_inputs);
             lks.push_back(lk);
         }
@@ -173,7 +173,7 @@ private:
     std::unordered_map<std::shared_ptr<Node>, std::shared_ptr<Node>> m_heads;
 };
 
-bool ngraph::runtime::cpu::pass::CPULoopKernelFusion::run_on_function(
+bool ngraph::runtime::ccpu::pass::CPULoopKernelFusion::run_on_function(
     std::shared_ptr<ngraph::Function> function)
 {
     LoopKernelCollector lkc(function, m_min_kernel_size);

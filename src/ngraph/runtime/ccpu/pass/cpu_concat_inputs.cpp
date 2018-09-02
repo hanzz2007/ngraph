@@ -50,7 +50,7 @@
 
 using namespace ngraph;
 
-void ngraph::runtime::cpu::pass::ConcatInputs::concat_lstm_inputs()
+void ngraph::runtime::ccpu::pass::ConcatInputs::concat_lstm_inputs()
 {
     auto ht_1 = std::make_shared<pattern::op::Label>(element::f32, Shape{32, 100});
     auto weights_h2h = std::make_shared<pattern::op::Label>(element::f32, Shape{400, 100});

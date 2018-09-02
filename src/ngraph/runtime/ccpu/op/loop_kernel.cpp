@@ -23,7 +23,7 @@ using namespace std;
 using namespace ngraph;
 
 shared_ptr<Node>
-    ngraph::runtime::cpu::op::LoopKernel::copy_with_new_args(const NodeVector& new_args) const
+    ngraph::runtime::ccpu::op::LoopKernel::copy_with_new_args(const NodeVector& new_args) const
 {
     auto args = get_arguments();
     if (new_args.size() != args.size())
@@ -60,7 +60,7 @@ shared_ptr<Node>
     return std::make_shared<LoopKernel>(new_node_list, new_outputs, new_args);
 }
 
-ngraph::runtime::cpu::op::LoopKernel::LoopKernel(const NodeVector& node_list,
+ngraph::runtime::ccpu::op::LoopKernel::LoopKernel(const NodeVector& node_list,
                                                  const NodeVector& outputs,
                                                  const NodeVector& args)
     : Op("LoopKernel", check_single_output_args({args}))

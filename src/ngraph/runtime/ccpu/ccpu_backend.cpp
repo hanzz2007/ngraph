@@ -32,7 +32,7 @@ extern "C" const char* get_ngraph_version_string()
 
 extern "C" runtime::Backend* new_backend(const char* configuration_string)
 {
-    return new runtime::cpu::CCPUBackend();
+    return new runtime::ccpu::CCPUBackend();
 }
 
 extern "C" void delete_backend(runtime::Backend* backend)
@@ -50,25 +50,25 @@ namespace
     } s_cpu_static_init;
 }
 
-shared_ptr<runtime::cpu::CCPUCallFrame> runtime::cpu::CCPUBackend::make_call_frame(
-    const shared_ptr<runtime::cpu::CCPUExternalFunction>& external_function)
+shared_ptr<runtime::ccpu::CCPUCallFrame> runtime::ccpu::CCPUBackend::make_call_frame(
+    const shared_ptr<runtime::ccpu::CCPUExternalFunction>& external_function)
 {
     return external_function->make_call_frame();
 }
 
 shared_ptr<runtime::TensorView>
-    runtime::cpu::CCPUBackend::create_tensor(const element::Type& element_type, const Shape& shape)
+    runtime::ccpu::CCPUBackend::create_tensor(const element::Type& element_type, const Shape& shape)
 {
-    return make_shared<runtime::cpu::CCPUTensorView>(element_type, shape);
+    return make_shared<runtime::ccpu::CCPUTensorView>(element_type, shape);
 }
 
-shared_ptr<runtime::TensorView> runtime::cpu::CCPUBackend::create_tensor(
+shared_ptr<runtime::TensorView> runtime::ccpu::CCPUBackend::create_tensor(
     const element::Type& element_type, const Shape& shape, void* memory_pointer)
 {
-    return make_shared<runtime::cpu::CCPUTensorView>(element_type, shape, memory_pointer);
+    return make_shared<runtime::ccpu::CCPUTensorView>(element_type, shape, memory_pointer);
 }
 
-bool runtime::cpu::CCPUBackend::compile(shared_ptr<Function> func)
+bool runtime::ccpu::CCPUBackend::compile(shared_ptr<Function> func)
 {
     FunctionInstance& instance = m_function_map[func];
     if (instance.m_external_function == nullptr)
@@ -81,9 +81,9 @@ bool runtime::cpu::CCPUBackend::compile(shared_ptr<Function> func)
     return true;
 }
 
-bool runtime::cpu::CCPUBackend::call(shared_ptr<Function> func,
-                                     const vector<shared_ptr<runtime::TensorView>>& outputs,
-                                     const vector<shared_ptr<runtime::TensorView>>& inputs)
+bool runtime::ccpu::CCPUBackend::call(shared_ptr<Function> func,
+                                      const vector<shared_ptr<runtime::TensorView>>& outputs,
+                                      const vector<shared_ptr<runtime::TensorView>>& inputs)
 {
     bool rc = true;
 
@@ -98,12 +98,12 @@ bool runtime::cpu::CCPUBackend::call(shared_ptr<Function> func,
     return rc;
 }
 
-void runtime::cpu::CCPUBackend::remove_compiled_function(shared_ptr<Function> func)
+void runtime::ccpu::CCPUBackend::remove_compiled_function(shared_ptr<Function> func)
 {
     m_function_map.erase(func);
 }
 
-void runtime::cpu::CCPUBackend::enable_performance_data(shared_ptr<Function> func, bool enable)
+void runtime::ccpu::CCPUBackend::enable_performance_data(shared_ptr<Function> func, bool enable)
 {
     FunctionInstance& instance = m_function_map[func];
     if (instance.m_external_function != nullptr)
@@ -114,7 +114,7 @@ void runtime::cpu::CCPUBackend::enable_performance_data(shared_ptr<Function> fun
 }
 
 vector<runtime::PerformanceCounter>
-    runtime::cpu::CCPUBackend::get_performance_data(shared_ptr<Function> func) const
+    runtime::ccpu::CCPUBackend::get_performance_data(shared_ptr<Function> func) const
 {
     vector<runtime::PerformanceCounter> rc;
     auto it = m_function_map.find(func);

@@ -23,7 +23,7 @@ namespace ngraph
 {
     namespace runtime
     {
-        namespace cpu
+        namespace ccpu
         {
             namespace pass
             {
@@ -33,7 +33,7 @@ namespace ngraph
     }
 }
 
-class ngraph::runtime::cpu::pass::CPUWorkspaceInsertion : public ngraph::pass::FunctionPass
+class ngraph::runtime::ccpu::pass::CPUWorkspaceInsertion : public ngraph::pass::FunctionPass
 {
 public:
     CPUWorkspaceInsertion(ngraph::NodeVector& indices_list)

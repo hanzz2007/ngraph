@@ -22,7 +22,7 @@ namespace ngraph
 {
     namespace runtime
     {
-        namespace cpu
+        namespace ccpu
         {
             namespace pass
             {
@@ -32,7 +32,7 @@ namespace ngraph
     }
 }
 
-class ngraph::runtime::cpu::pass::CPUFusion : public ngraph::pass::GraphRewrite
+class ngraph::runtime::ccpu::pass::CPUFusion : public ngraph::pass::GraphRewrite
 {
 public:
     // 30 different fusion groups that we can nest/mix&match/etc

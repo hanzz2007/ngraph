@@ -49,7 +49,7 @@
 #include "ngraph/runtime/ccpu/op/sigmoid.hpp"
 
 using namespace ngraph;
-void ngraph::runtime::cpu::pass::LSTMFusion::construct_sigmoid()
+void ngraph::runtime::ccpu::pass::LSTMFusion::construct_sigmoid()
 {
     // construct variance
     auto input = std::make_shared<pattern::op::Label>(element::f32, Shape{3, 4});
@@ -92,7 +92,7 @@ void ngraph::runtime::cpu::pass::LSTMFusion::construct_sigmoid()
     this->add_matcher(m);
 }
 
-void ngraph::runtime::cpu::pass::LSTMFusion::construct_lstm_fprop()
+void ngraph::runtime::ccpu::pass::LSTMFusion::construct_lstm_fprop()
 {
     auto input_xt = std::make_shared<pattern::op::Label>(element::f32, Shape{10, 100});
     auto weights_i2h = std::make_shared<pattern::op::Label>(element::f32, Shape{400, 100});
@@ -319,7 +319,7 @@ static std::shared_ptr<ngraph::Node>
     }
 }
 
-void ngraph::runtime::cpu::pass::RNNFusion::construct_rnn_lstm_fprop()
+void ngraph::runtime::ccpu::pass::RNNFusion::construct_rnn_lstm_fprop()
 {
     auto ht_1 = std::make_shared<pattern::op::Label>(element::f32, Shape{32, 100});
     auto weights_h2h = std::make_shared<pattern::op::Label>(element::f32, Shape{400, 100});
@@ -610,7 +610,7 @@ static std::shared_ptr<Node>
     return std::make_shared<op::Concat>(node_labels, 0);
 }
 
-void ngraph::runtime::cpu::pass::MultiLayerRNNFusion::construct_multi_layer_rnn_fusion_fprop()
+void ngraph::runtime::ccpu::pass::MultiLayerRNNFusion::construct_multi_layer_rnn_fusion_fprop()
 {
     auto src_layer_label = std::make_shared<pattern::op::Label>(element::f32, Shape{30, 100});
 

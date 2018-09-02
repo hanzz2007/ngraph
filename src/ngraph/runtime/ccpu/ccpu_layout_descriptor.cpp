@@ -24,7 +24,7 @@ namespace ngraph
 {
     namespace runtime
     {
-        namespace cpu
+        namespace ccpu
         {
             const mkldnn::memory::desc
                 LayoutDescriptor::DummyDesc(mkldnn::memory::dims(TENSOR_MAX_DIMS),
@@ -83,8 +83,8 @@ namespace ngraph
                     {
                         return false;
                     }
-                    return runtime::cpu::mkldnn_utils::compare_mkldnn_mds(m_mkldnn_md,
-                                                                          p_other->get_mkldnn_md());
+                    return runtime::ccpu::mkldnn_utils::compare_mkldnn_mds(
+                        m_mkldnn_md, p_other->get_mkldnn_md());
                 }
 
                 if (m_strides != p_other->m_strides)

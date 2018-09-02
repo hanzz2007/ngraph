@@ -20,14 +20,14 @@
 #include "ngraph/runtime/ccpu/ccpu_external_function.hpp"
 
 #define LAYOUT_DECL(op_type)                                                                       \
-    layout<op_type>(ngraph::runtime::cpu::CCPUExternalFunction * external_function,                \
+    layout<op_type>(ngraph::runtime::ccpu::CCPUExternalFunction * external_function,               \
                     std::shared_ptr<ngraph::Node> node)
 
 namespace ngraph
 {
     namespace runtime
     {
-        namespace cpu
+        namespace ccpu
         {
             namespace pass
             {
@@ -48,7 +48,7 @@ namespace ngraph
 
                     template <typename OP>
                     static void
-                        layout(ngraph::runtime::cpu::CCPUExternalFunction* external_function,
+                        layout(ngraph::runtime::ccpu::CCPUExternalFunction* external_function,
                                std::shared_ptr<ngraph::Node> node);
 
                 private:
