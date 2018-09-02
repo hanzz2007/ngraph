@@ -1060,7 +1060,7 @@ string runtime::ccpu::CCPUExternalFunction::emit_op_as_function(const Node& node
         writer << tvw.get_type() << "* " << tvw.get_name();
         out.push_back(tvw);
     }
-    writer << ",\ncpu::CCPURuntimeContext* ctx";
+    writer << ",\nccpu::CCPURuntimeContext* ctx";
     writer.indent--;
     writer << "\n)\n";
     writer << "{\n";
