@@ -3726,13 +3726,30 @@ void ngraph::runtime::ccpu::CCPUEmitter::emit<ngraph::op::Custom>(
     const std::vector<TensorViewWrapper>& args,
     const std::vector<TensorViewWrapper>& out)
 {
+    writer.block_begin();
     const ngraph::op::Custom* custom_op = static_cast<const ngraph::op::Custom*>(node);
-    writer << "// CustomOp\n";
     writer << "auto " << custom_op->get_name()
-           << " = static_cast<void(*)(ngraph::runtime::Backend* backend,\n";
+           << " = static_cast<void(*)(ngraph::runtime::Backend*,\n";
     writer << "    const std::vector<std::shared_ptr<ngraph::runtime::TensorView>>& out,\n";
-    writer << "    const std::vector<std::shared_ptr<ngraph::runtime::TensorView>>& args)>"
-           << custom_op->get_exec_ptr("CCPU") << ";\n";
+    writer << "    const std::vector<std::shared_ptr<ngraph::runtime::TensorView>>& args)>("
+           << custom_op->get_exec_ptr("CCPU") << ");\n";
+    writer << "ngraph::runtime::Backend* backend = nullptr;\n";
+    writer << "std::vector<std::shared_ptr<ngraph::runtime::TensorView>> args;\n";
+    writer << "std::vector<std::shared_ptr<ngraph::runtime::TensorView>> out;\n";
+    size_t arg_index = 0;
+    for (const TensorViewWrapper& tv : args)
+    {
+        writer << "args.emplace_back(backend->create_tensor(" << tv.get_element_type() << ", "
+               << tv.get_shape() << ", " << args[arg_index++].get_name() << "));\n";
+    }
+    size_t out_index = 0;
+    for (const TensorViewWrapper& tv : out)
+    {
+        writer << "out.emplace_back(backend->create_tensor(" << tv.get_element_type() << ", "
+               << tv.get_shape() << ", " << out[out_index++].get_name() << "));\n";
+    }
+    writer << custom_op->get_name() << "(backend, out, args);\n";
+    writer.block_end();
 }
 
 #define TI(x) std::type_index(typeid(x))
