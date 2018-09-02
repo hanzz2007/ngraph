@@ -211,109 +211,107 @@ static string emit_string_array(const vector<string>& s, size_t max_line_length)
 
 static StaticInitializers s_static_initializers;
 
-#define TI(x) type_index(typeid(x))
+#define TI(x) type_index(typeid(x)).name()
+#define ADD_OP(a)                                                                                  \
+    {                                                                                              \
+        TI(ngraph::op::a), &ngraph::runtime::ccpu::CCPUEmitter::emit<ngraph::op::a>                \
+    }
 
 static const runtime::ccpu::OpMap dispatcher{
-    {TI(ngraph::op::Add), &runtime::ccpu::CCPUEmitter::emit<op::Add>},
-    {TI(ngraph::op::MatmulBias), &runtime::ccpu::CCPUEmitter::emit<op::MatmulBias>},
-    {TI(ngraph::op::Dot), &runtime::ccpu::CCPUEmitter::emit<op::Dot>},
-    {TI(ngraph::op::Multiply), &runtime::ccpu::CCPUEmitter::emit<op::Multiply>},
-    {TI(ngraph::op::Parameter), &runtime::ccpu::CCPUEmitter::nop},
-    {TI(ngraph::op::Abs), &runtime::ccpu::CCPUEmitter::emit<op::Abs>},
-    {TI(ngraph::op::BatchDot), &runtime::ccpu::CCPUEmitter::emit<op::BatchDot>},
-    {TI(ngraph::op::Concat), &runtime::ccpu::CCPUEmitter::emit<op::Concat>},
-    {TI(ngraph::op::Divide), &runtime::ccpu::CCPUEmitter::emit<op::Divide>},
-    {TI(ngraph::op::Equal), &runtime::ccpu::CCPUEmitter::emit<op::Equal>},
-    {TI(ngraph::op::GetOutputElement), &runtime::ccpu::CCPUEmitter::emit<op::GetOutputElement>},
-    {TI(ngraph::op::Greater), &runtime::ccpu::CCPUEmitter::emit<op::Greater>},
-    {TI(ngraph::op::GreaterEq), &runtime::ccpu::CCPUEmitter::emit<op::GreaterEq>},
-    {TI(ngraph::op::Less), &runtime::ccpu::CCPUEmitter::emit<op::Less>},
-    {TI(ngraph::op::LessEq), &runtime::ccpu::CCPUEmitter::emit<op::LessEq>},
-    {TI(ngraph::op::Log), &runtime::ccpu::CCPUEmitter::emit<op::Log>},
-    {TI(ngraph::op::Maximum), &runtime::ccpu::CCPUEmitter::emit<op::Maximum>},
-    {TI(ngraph::op::Minimum), &runtime::ccpu::CCPUEmitter::emit<op::Minimum>},
-    {TI(ngraph::op::Negative), &runtime::ccpu::CCPUEmitter::emit<op::Negative>},
-    {TI(ngraph::op::NotEqual), &runtime::ccpu::CCPUEmitter::emit<op::NotEqual>},
-    {TI(ngraph::op::Power), &runtime::ccpu::CCPUEmitter::emit<op::Power>},
-    {TI(ngraph::op::Select), &runtime::ccpu::CCPUEmitter::emit<op::Select>},
-    {TI(ngraph::op::Subtract), &runtime::ccpu::CCPUEmitter::emit<op::Subtract>},
-    {TI(ngraph::op::Broadcast), &runtime::ccpu::CCPUEmitter::emit<op::Broadcast>},
-    {TI(ngraph::op::Convert), &runtime::ccpu::CCPUEmitter::emit<op::Convert>},
-    {TI(ngraph::op::Constant), &runtime::ccpu::CCPUEmitter::emit<op::Constant>},
-    {TI(ngraph::op::Reshape), &runtime::ccpu::CCPUEmitter::emit<op::Reshape>},
-    {TI(ngraph::op::FunctionCall), &runtime::ccpu::CCPUEmitter::emit<op::FunctionCall>},
-    {TI(ngraph::op::Reduce), &runtime::ccpu::CCPUEmitter::emit<op::Reduce>},
-    {TI(ngraph::op::Sign), &runtime::ccpu::CCPUEmitter::emit<op::Sign>},
-    {TI(ngraph::op::Slice), &runtime::ccpu::CCPUEmitter::emit<op::Slice>},
-    {TI(ngraph::op::Sum), &runtime::ccpu::CCPUEmitter::emit<op::Sum>},
-    {TI(ngraph::op::Exp), &runtime::ccpu::CCPUEmitter::emit<op::Exp>},
-    {TI(ngraph::op::Sin), &runtime::ccpu::CCPUEmitter::emit<op::Sin>},
-    {TI(ngraph::op::Sinh), &runtime::ccpu::CCPUEmitter::emit<op::Sinh>},
-    {TI(ngraph::op::Cos), &runtime::ccpu::CCPUEmitter::emit<op::Cos>},
-    {TI(ngraph::op::Cosh), &runtime::ccpu::CCPUEmitter::emit<op::Cosh>},
-    {TI(ngraph::op::Tan), &runtime::ccpu::CCPUEmitter::emit<op::Tan>},
-    {TI(ngraph::op::Tanh), &runtime::ccpu::CCPUEmitter::emit<op::Tanh>},
-    {TI(ngraph::op::Asin), &runtime::ccpu::CCPUEmitter::emit<op::Asin>},
-    {TI(ngraph::op::ArgMin), &runtime::ccpu::CCPUEmitter::emit<op::ArgMin>},
-    {TI(ngraph::op::ArgMax), &runtime::ccpu::CCPUEmitter::emit<op::ArgMax>},
-    {TI(ngraph::op::Acos), &runtime::ccpu::CCPUEmitter::emit<op::Acos>},
-    {TI(ngraph::op::Atan), &runtime::ccpu::CCPUEmitter::emit<op::Atan>},
-    {TI(ngraph::op::ReplaceSlice), &runtime::ccpu::CCPUEmitter::emit<op::ReplaceSlice>},
-    {TI(ngraph::op::OneHot), &runtime::ccpu::CCPUEmitter::emit<op::OneHot>},
-    {TI(ngraph::op::Floor), &runtime::ccpu::CCPUEmitter::emit<op::Floor>},
-    {TI(ngraph::op::Ceiling), &runtime::ccpu::CCPUEmitter::emit<op::Ceiling>},
-    {TI(ngraph::op::Sqrt), &runtime::ccpu::CCPUEmitter::emit<op::Sqrt>},
-    {TI(ngraph::op::Convolution), &runtime::ccpu::CCPUEmitter::emit<op::Convolution>},
-    {TI(ngraph::op::ConvolutionBackpropFilters),
-     &runtime::ccpu::CCPUEmitter::emit<op::ConvolutionBackpropFilters>},
-    {TI(ngraph::op::ConvolutionBackpropData),
-     &runtime::ccpu::CCPUEmitter::emit<op::ConvolutionBackpropData>},
-    {TI(ngraph::op::GroupConvolution), &runtime::ccpu::CCPUEmitter::emit<op::GroupConvolution>},
-    {TI(ngraph::op::ConvolutionBias), &runtime::ccpu::CCPUEmitter::emit<op::ConvolutionBias>},
-    {TI(ngraph::op::ConvolutionRelu), &runtime::ccpu::CCPUEmitter::emit<op::ConvolutionRelu>},
-    {TI(ngraph::op::ConvolutionBiasAdd), &runtime::ccpu::CCPUEmitter::emit<op::ConvolutionBiasAdd>},
-    // conv+bias backprop for data share the same implementation as ConvolutionBackpropData
-    {TI(ngraph::op::ConvolutionBiasBackpropFiltersBias),
-     &runtime::ccpu::CCPUEmitter::emit<op::ConvolutionBiasBackpropFiltersBias>},
-    {TI(ngraph::runtime::ccpu::op::ConvertLayout),
-     &runtime::ccpu::CCPUEmitter::emit<runtime::ccpu::op::ConvertLayout>},
-    {TI(ngraph::op::Not), &runtime::ccpu::CCPUEmitter::emit<op::Not>},
-    {TI(ngraph::op::MaxPool), &runtime::ccpu::CCPUEmitter::emit<op::MaxPool>},
-    {TI(ngraph::op::MaxPoolWithIndices), &runtime::ccpu::CCPUEmitter::emit<op::MaxPoolWithIndices>},
-    {TI(ngraph::op::Reverse), &runtime::ccpu::CCPUEmitter::emit<op::Reverse>},
-    {TI(ngraph::op::ReverseSequence), &runtime::ccpu::CCPUEmitter::emit<op::ReverseSequence>},
-    {TI(ngraph::op::Result), &runtime::ccpu::CCPUEmitter::emit<op::Result>},
-    {TI(ngraph::op::ReduceWindow), &runtime::ccpu::CCPUEmitter::emit<op::ReduceWindow>},
-    {TI(ngraph::op::SelectAndScatter), &runtime::ccpu::CCPUEmitter::emit<op::SelectAndScatter>},
-    {TI(ngraph::op::AvgPool), &runtime::ccpu::CCPUEmitter::emit<op::AvgPool>},
-    {TI(ngraph::op::AvgPoolBackprop), &runtime::ccpu::CCPUEmitter::emit<op::AvgPoolBackprop>},
-    {TI(ngraph::op::Pad), &runtime::ccpu::CCPUEmitter::emit<op::Pad>},
-    {TI(ngraph::op::BatchNorm), &runtime::ccpu::CCPUEmitter::emit<op::BatchNorm>},
-    {TI(ngraph::op::BatchNormRelu), &runtime::ccpu::CCPUEmitter::emit<op::BatchNormRelu>},
-    {TI(ngraph::op::BatchNormBackprop), &runtime::ccpu::CCPUEmitter::emit<op::BatchNormBackprop>},
-    {TI(ngraph::op::BoundedRelu), &runtime::ccpu::CCPUEmitter::emit<op::BoundedRelu>},
-    {TI(ngraph::op::Lstm), &runtime::ccpu::CCPUEmitter::emit<op::Lstm>},
-    {TI(ngraph::op::MaxPoolBackprop), &runtime::ccpu::CCPUEmitter::emit<op::MaxPoolBackprop>},
-    {TI(ngraph::op::MaxPoolWithIndicesBackprop),
-     &runtime::ccpu::CCPUEmitter::emit<op::MaxPoolWithIndicesBackprop>},
-    {TI(ngraph::op::Product), &runtime::ccpu::CCPUEmitter::emit<op::Product>},
-    {TI(ngraph::op::Max), &runtime::ccpu::CCPUEmitter::emit<op::Max>},
-    {TI(ngraph::op::Min), &runtime::ccpu::CCPUEmitter::emit<op::Min>},
-    {TI(ngraph::op::Relu), &runtime::ccpu::CCPUEmitter::emit<op::Relu>},
-    {TI(ngraph::op::ReluBackprop), &runtime::ccpu::CCPUEmitter::emit<op::ReluBackprop>},
-    {TI(ngraph::op::Rnn), &runtime::ccpu::CCPUEmitter::emit<op::Rnn>},
-    {TI(ngraph::op::Sigmoid), &runtime::ccpu::CCPUEmitter::emit<op::Sigmoid>},
-    {TI(ngraph::op::SigmoidMultiply), &runtime::ccpu::CCPUEmitter::emit<op::SigmoidMultiply>},
-    {TI(ngraph::op::SigmoidMultiplyBackprop),
-     &runtime::ccpu::CCPUEmitter::emit<op::SigmoidMultiplyBackprop>},
-    {TI(ngraph::op::Softmax), &runtime::ccpu::CCPUEmitter::emit<op::Softmax>},
-    {TI(ngraph::op::SigmoidBackprop), &runtime::ccpu::CCPUEmitter::emit<op::SigmoidBackprop>},
-    {TI(ngraph::op::And), &runtime::ccpu::CCPUEmitter::emit<op::And>},
-    {TI(ngraph::op::Or), &runtime::ccpu::CCPUEmitter::emit<op::Or>},
+    ADD_OP(Abs),
+    ADD_OP(Acos),
+    ADD_OP(Add),
+    ADD_OP(And),
+    ADD_OP(ArgMax),
+    ADD_OP(ArgMin),
+    ADD_OP(Asin),
+    ADD_OP(Atan),
+    ADD_OP(AvgPool),
+    ADD_OP(AvgPoolBackprop),
+    ADD_OP(BatchDot),
+    ADD_OP(BatchNorm),
+    ADD_OP(BatchNormBackprop),
+    ADD_OP(BatchNormRelu),
+    ADD_OP(BoundedRelu),
+    ADD_OP(Broadcast),
+    ADD_OP(Ceiling),
+    ADD_OP(Concat),
+    ADD_OP(Constant),
+    ADD_OP(Convert),
+    ADD_OP(Convolution),
+    ADD_OP(ConvolutionBackpropData),
+    ADD_OP(ConvolutionBackpropFilters),
+    ADD_OP(ConvolutionBias),
+    ADD_OP(ConvolutionBiasAdd),
+    ADD_OP(ConvolutionBiasBackpropFiltersBias),
+    ADD_OP(ConvolutionRelu),
+    ADD_OP(Cos),
+    ADD_OP(Cosh),
+    ADD_OP(Custom),
+    ADD_OP(Divide),
+    ADD_OP(Dot),
+    ADD_OP(Equal),
+    ADD_OP(Exp),
+    ADD_OP(Floor),
+    ADD_OP(FunctionCall),
+    ADD_OP(GetOutputElement),
+    ADD_OP(Greater),
+    ADD_OP(GreaterEq),
+    ADD_OP(GroupConvolution),
+    ADD_OP(Less),
+    ADD_OP(LessEq),
+    ADD_OP(Log),
+    ADD_OP(LRN),
+    ADD_OP(Lstm),
+    ADD_OP(MatmulBias),
+    ADD_OP(Max),
+    ADD_OP(Maximum),
+    ADD_OP(MaxPool),
+    ADD_OP(MaxPoolBackprop),
+    ADD_OP(MaxPoolWithIndices),
+    ADD_OP(MaxPoolWithIndicesBackprop),
+    ADD_OP(Min),
+    ADD_OP(Minimum),
+    ADD_OP(Multiply),
+    ADD_OP(Negative),
+    ADD_OP(Not),
+    ADD_OP(NotEqual),
+    ADD_OP(OneHot),
+    ADD_OP(Or),
+    ADD_OP(Pad),
+    ADD_OP(Parameter),
+    ADD_OP(Power),
+    ADD_OP(Product),
+    ADD_OP(Reduce),
+    ADD_OP(ReduceWindow),
+    ADD_OP(Relu),
+    ADD_OP(ReluBackprop),
+    ADD_OP(ReplaceSlice),
+    ADD_OP(Reshape),
+    ADD_OP(Result),
+    ADD_OP(Reverse),
+    ADD_OP(ReverseSequence),
+    ADD_OP(Rnn),
+    ADD_OP(Select),
+    ADD_OP(SelectAndScatter),
+    ADD_OP(Sigmoid),
+    ADD_OP(SigmoidBackprop),
+    ADD_OP(SigmoidMultiply),
+    ADD_OP(SigmoidMultiplyBackprop),
+    ADD_OP(Sign),
+    ADD_OP(Sin),
+    ADD_OP(Sinh),
+    ADD_OP(Slice),
+    ADD_OP(Softmax),
+    ADD_OP(Sqrt),
+    ADD_OP(Subtract),
+    ADD_OP(Sum),
+    ADD_OP(Tan),
+    ADD_OP(Tanh),
     {TI(ngraph::runtime::ccpu::op::LoopKernel),
      &runtime::ccpu::CCPUEmitter::emit<runtime::ccpu::op::LoopKernel>},
-    {TI(ngraph::op::LRN), &runtime::ccpu::CCPUEmitter::emit<ngraph::op::LRN>},
-    {TI(ngraph::op::Custom), &runtime::ccpu::CCPUEmitter::emit<ngraph::op::Custom>},
+    {TI(ngraph::runtime::ccpu::op::ConvertLayout),
+     &runtime::ccpu::CCPUEmitter::emit<runtime::ccpu::op::ConvertLayout>},
 };
 
 static void
@@ -1002,17 +1000,33 @@ bool runtime::ccpu::CCPUExternalFunction::is_functionally_identical(
 
 runtime::ccpu::OpFunction runtime::ccpu::CCPUExternalFunction::dispatcher_lookup(const Node& node)
 {
-    auto handler = dispatcher.find(type_index(typeid(node)));
+    string node_name = type_index(typeid(node)).name();
+    NGRAPH_INFO << "looking for node " << node_name;
+    for (auto x : dispatcher)
+    {
+        if (node_name == x.first)
+        {
+            NGRAPH_INFO << "FOUND NODE " << node_name;
+        }
+    }
+
+    auto handler = dispatcher.find(node_name);
     if (handler == dispatcher.end())
     {
+        NGRAPH_INFO;
         if (auto op = dynamic_cast<const ngraph::op::Custom*>(&node))
         {
-            handler = dispatcher.find(type_index(typeid(ngraph::op::Custom)));
+            node_name = type_index(typeid(ngraph::op::Custom)).name();
+            NGRAPH_INFO << "custom op " << node_name;
+            handler = dispatcher.find(node_name);
         }
         else
         {
             throw ngraph_error("Unhandled op during function emit : " + node.description());
         }
+    }
+    else
+    {
     }
     return handler->second;
 }

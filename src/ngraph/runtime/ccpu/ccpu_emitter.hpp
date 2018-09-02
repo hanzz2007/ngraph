@@ -45,6 +45,7 @@ public:
                      const std::vector<TensorViewWrapper>& args,
                      const std::vector<TensorViewWrapper>& out)
     {
+        NGRAPH_INFO << typeid(OP).name();
         throw std::runtime_error("Unimplemented op in CPU emitter");
     }
 

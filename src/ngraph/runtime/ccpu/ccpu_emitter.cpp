@@ -333,6 +333,16 @@ static std::string emit_constant_array(const std::string& type,
 }
 
 template <>
+void ngraph::runtime::ccpu::CCPUEmitter::emit<ngraph::op::Parameter>(
+    CCPUExternalFunction* external_function,
+    codegen::CodeWriter& writer,
+    const ngraph::Node* node,
+    const std::vector<TensorViewWrapper>& args,
+    const std::vector<TensorViewWrapper>& out)
+{
+}
+
+template <>
 void ngraph::runtime::ccpu::CCPUEmitter::emit<ngraph::op::MatmulBias>(
     CCPUExternalFunction* external_function,
     codegen::CodeWriter& writer,
