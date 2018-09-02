@@ -43,10 +43,16 @@ op::Custom::execute_t op::Custom::get_exec(const std::string& backend_name) cons
 
 void* op::Custom::get_exec_ptr(const std::string& backend_name) const
 {
-    auto exec = get_exec(backend_name);
-    return exec.target<void (*)(runtime::Backend * backend,
-                                const std::vector<std::shared_ptr<runtime::TensorView>>& out,
-                                const std::vector<std::shared_ptr<runtime::TensorView>>& args)>();
+    execute_t exec = get_exec(backend_name);
+    void* target = exec.target<void (*)(
+        ngraph::runtime::Backend * backend,
+        const std::vector<std::shared_ptr<ngraph::runtime::TensorView>>& out,
+        const std::vector<std::shared_ptr<ngraph::runtime::TensorView>>& args)>();
+    if (!target)
+    {
+        throw runtime_error("Custom op exec function must be static");
+    }
+    return target;
 }
 
 void op::Custom::generate_adjoints(autodiff::Adjoints& adjoints, const NodeVector& deltas)

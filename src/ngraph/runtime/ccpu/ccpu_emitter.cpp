@@ -3729,9 +3729,9 @@ void ngraph::runtime::ccpu::CCPUEmitter::emit<ngraph::op::Custom>(
     const ngraph::op::Custom* custom_op = static_cast<const ngraph::op::Custom*>(node);
     writer << "// CustomOp\n";
     writer << "auto " << custom_op->get_name()
-           << " = static_cast<void(*)(runtime::Backend* backend,\n";
-    writer << "    const std::vector<std::shared_ptr<runtime::TensorView>>& out,\n";
-    writer << "    const std::vector<std::shared_ptr<runtime::TensorView>>& args)>"
+           << " = static_cast<void(*)(ngraph::runtime::Backend* backend,\n";
+    writer << "    const std::vector<std::shared_ptr<ngraph::runtime::TensorView>>& out,\n";
+    writer << "    const std::vector<std::shared_ptr<ngraph::runtime::TensorView>>& args)>"
            << custom_op->get_exec_ptr("CCPU") << ";\n";
 }
 

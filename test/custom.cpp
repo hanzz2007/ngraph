@@ -39,12 +39,14 @@ public:
           const std::shared_ptr<Node>& arg2)
         : Custom("ABC", {arg0, arg1, arg2})
     {
-        register_exec(
-            "INTERPRETER",
-            bind(&AbcOp::execute, this, placeholders::_1, placeholders::_2, placeholders::_3));
-        register_exec(
-            "CCPU",
-            bind(&AbcOp::execute, this, placeholders::_1, placeholders::_2, placeholders::_3));
+        // register_exec(
+        //     "INTERPRETER",
+        //     bind(&AbcOp::execute, this, placeholders::_1, placeholders::_2, placeholders::_3));
+        // register_exec(
+        //     "CCPU",
+        //     bind(&AbcOp::execute, this, placeholders::_1, placeholders::_2, placeholders::_3));
+        register_exec("INTERPRETER", execute);
+        register_exec("CCPU", execute);
 
         if (arg0->get_element_type() != arg1->get_element_type() ||
             arg0->get_element_type() != arg2->get_element_type())
@@ -63,9 +65,9 @@ public:
     }
 
 private:
-    void execute(runtime::Backend* backend,
-                 const std::vector<std::shared_ptr<runtime::TensorView>>& out,
-                 const std::vector<std::shared_ptr<runtime::TensorView>>& args) const
+    static void execute(runtime::Backend* backend,
+                        const std::vector<std::shared_ptr<runtime::TensorView>>& out,
+                        const std::vector<std::shared_ptr<runtime::TensorView>>& args)
     {
         if (dynamic_cast<runtime::interpreter::INTBackend*>(backend))
         {
