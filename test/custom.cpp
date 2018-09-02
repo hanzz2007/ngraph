@@ -69,22 +69,23 @@ private:
                         const std::vector<std::shared_ptr<runtime::TensorView>>& out,
                         const std::vector<std::shared_ptr<runtime::TensorView>>& args)
     {
-        if (dynamic_cast<runtime::interpreter::INTBackend*>(backend))
-        {
-            const float* arg0 =
-                dynamic_pointer_cast<runtime::HostTensorView>(args[0])->get_data_ptr<float>();
-            const float* arg1 =
-                dynamic_pointer_cast<runtime::HostTensorView>(args[1])->get_data_ptr<float>();
-            const float* arg2 =
-                dynamic_pointer_cast<runtime::HostTensorView>(args[2])->get_data_ptr<float>();
-            float* out0 =
-                dynamic_pointer_cast<runtime::HostTensorView>(out[0])->get_data_ptr<float>();
-            size_t size = out[0]->get_element_count();
-            for (size_t i = 0; i < size; i++)
-            {
-                out0[i] = (arg0[i] + arg1[i]) * arg2[i];
-            }
-        }
+        NGRAPH_INFO;
+        // if (dynamic_cast<runtime::interpreter::INTBackend*>(backend))
+        // {
+        //     const float* arg0 =
+        //         dynamic_pointer_cast<runtime::HostTensorView>(args[0])->get_data_ptr<float>();
+        //     const float* arg1 =
+        //         dynamic_pointer_cast<runtime::HostTensorView>(args[1])->get_data_ptr<float>();
+        //     const float* arg2 =
+        //         dynamic_pointer_cast<runtime::HostTensorView>(args[2])->get_data_ptr<float>();
+        //     float* out0 =
+        //         dynamic_pointer_cast<runtime::HostTensorView>(out[0])->get_data_ptr<float>();
+        //     size_t size = out[0]->get_element_count();
+        //     for (size_t i = 0; i < size; i++)
+        //     {
+        //         out0[i] = (arg0[i] + arg1[i]) * arg2[i];
+        //     }
+        // }
     }
 
     shared_ptr<Node> copy_with_new_args(const NodeVector& new_args) const override
