@@ -30,44 +30,43 @@ namespace ngraph
     {
         namespace ccpu
         {
-            class CCPUEmitter
-            {
-            public:
-                template <typename OP>
-                static void emit(CCPUExternalFunction* external_function,
-                                 codegen::CodeWriter& writer,
-                                 const ngraph::Node* node,
-                                 const std::vector<TensorViewWrapper>& args,
-                                 const std::vector<TensorViewWrapper>& out)
-                {
-                    throw std::runtime_error("Unimplemented op in CPU emitter");
-                }
-
-                static void nop(CCPUExternalFunction* external_function,
-                                codegen::CodeWriter& writer,
-                                const ngraph::Node* node,
-                                const std::vector<TensorViewWrapper>& args,
-                                const std::vector<TensorViewWrapper>& out)
-                {
-                }
-                static void emitBatchNorm(CCPUExternalFunction* external_function,
-                                          codegen::CodeWriter& writer,
-                                          const ngraph::Node* node,
-                                          const std::vector<TensorViewWrapper>& args,
-                                          const std::vector<TensorViewWrapper>& out,
-                                          bool append_relu = false);
-
-            private:
-                static std::string emit_vector(const TensorViewWrapper&,
-                                               const std::string& name = "");
-                static std::string emit_array1d(const TensorViewWrapper&,
-                                                const std::string& name = "");
-                static std::string emit_matrix(const TensorViewWrapper&,
-                                               const std::string& name = "");
-
-                static std::string emit_for_lt(const std::string& prefix, size_t index, size_t to);
-                static std::string emit_indices(const std::vector<std::string> indices);
-            };
+            class CCPUEmitter;
         }
     }
 }
+
+class ngraph::runtime::ccpu::CCPUEmitter
+{
+public:
+    template <typename OP>
+    static void emit(CCPUExternalFunction* external_function,
+                     codegen::CodeWriter& writer,
+                     const ngraph::Node* node,
+                     const std::vector<TensorViewWrapper>& args,
+                     const std::vector<TensorViewWrapper>& out)
+    {
+        throw std::runtime_error("Unimplemented op in CPU emitter");
+    }
+
+    static void nop(CCPUExternalFunction* external_function,
+                    codegen::CodeWriter& writer,
+                    const ngraph::Node* node,
+                    const std::vector<TensorViewWrapper>& args,
+                    const std::vector<TensorViewWrapper>& out)
+    {
+    }
+    static void emitBatchNorm(CCPUExternalFunction* external_function,
+                              codegen::CodeWriter& writer,
+                              const ngraph::Node* node,
+                              const std::vector<TensorViewWrapper>& args,
+                              const std::vector<TensorViewWrapper>& out,
+                              bool append_relu = false);
+
+private:
+    static std::string emit_vector(const TensorViewWrapper&, const std::string& name = "");
+    static std::string emit_array1d(const TensorViewWrapper&, const std::string& name = "");
+    static std::string emit_matrix(const TensorViewWrapper&, const std::string& name = "");
+
+    static std::string emit_for_lt(const std::string& prefix, size_t index, size_t to);
+    static std::string emit_indices(const std::vector<std::string> indices);
+};

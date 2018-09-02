@@ -29,45 +29,45 @@ namespace ngraph
         {
             class CCPUExternalFunction;
             class CCPUCallFrame;
-
-            class CCPUBackend : public runtime::Backend
-            {
-            public:
-                std::shared_ptr<CCPUCallFrame>
-                    make_call_frame(const std::shared_ptr<CCPUExternalFunction>& external_function);
-
-                std::shared_ptr<ngraph::runtime::TensorView>
-                    create_tensor(const ngraph::element::Type& element_type,
-                                  const Shape& shape,
-                                  void* memory_pointer) override;
-
-                std::shared_ptr<ngraph::runtime::TensorView>
-                    create_tensor(const ngraph::element::Type& element_type,
-                                  const Shape& shape) override;
-
-                bool compile(std::shared_ptr<Function> func) override;
-
-                bool call(std::shared_ptr<Function> func,
-                          const std::vector<std::shared_ptr<runtime::TensorView>>& outputs,
-                          const std::vector<std::shared_ptr<runtime::TensorView>>& inputs) override;
-
-                void remove_compiled_function(std::shared_ptr<Function> func) override;
-
-                void enable_performance_data(std::shared_ptr<Function> func, bool enable) override;
-                std::vector<PerformanceCounter>
-                    get_performance_data(std::shared_ptr<Function> func) const override;
-
-            private:
-                class FunctionInstance
-                {
-                public:
-                    std::shared_ptr<CCPUExternalFunction> m_external_function;
-                    std::shared_ptr<CCPUCallFrame> m_call_frame;
-                    bool m_performance_counters_enabled = false;
-                };
-
-                std::map<std::shared_ptr<Function>, FunctionInstance> m_function_map;
-            };
+            class CCPUBackend;
         }
     }
 }
+
+class ngraph::runtime::ccpu::CCPUBackend : public runtime::Backend
+{
+public:
+    std::shared_ptr<CCPUCallFrame>
+        make_call_frame(const std::shared_ptr<CCPUExternalFunction>& external_function);
+
+    std::shared_ptr<ngraph::runtime::TensorView>
+        create_tensor(const ngraph::element::Type& element_type,
+                      const Shape& shape,
+                      void* memory_pointer) override;
+
+    std::shared_ptr<ngraph::runtime::TensorView>
+        create_tensor(const ngraph::element::Type& element_type, const Shape& shape) override;
+
+    bool compile(std::shared_ptr<Function> func) override;
+
+    bool call(std::shared_ptr<Function> func,
+              const std::vector<std::shared_ptr<runtime::TensorView>>& outputs,
+              const std::vector<std::shared_ptr<runtime::TensorView>>& inputs) override;
+
+    void remove_compiled_function(std::shared_ptr<Function> func) override;
+
+    void enable_performance_data(std::shared_ptr<Function> func, bool enable) override;
+    std::vector<PerformanceCounter>
+        get_performance_data(std::shared_ptr<Function> func) const override;
+
+private:
+    class FunctionInstance
+    {
+    public:
+        std::shared_ptr<CCPUExternalFunction> m_external_function;
+        std::shared_ptr<CCPUCallFrame> m_call_frame;
+        bool m_performance_counters_enabled = false;
+    };
+
+    std::map<std::shared_ptr<Function>, FunctionInstance> m_function_map;
+};
