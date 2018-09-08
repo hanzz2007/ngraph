@@ -29,8 +29,8 @@ namespace ngraph
     {
         namespace gpu
         {
-            typedef std::function<void(void**, void**)> primitive;
-            typedef std::function<void*(void)> memory_primitive;
+            using primitive = std::function<void(void**, void**)>;
+            using memory_primitive = std::function<void*(void)>;
 
             extern "C" {
             struct GPURuntimeContext
